@@ -1,0 +1,22 @@
+/* vue */
+[v-cloak] {
+    display: none;
+}
+
+/* admin method button */
+td.method-button button {
+    margin: 5px;
+}
+
+/* modal 擴充 */
+@media (min-width: 992px) {
+    .modal-2xl {
+        max-width: 800px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .modal-2xl {
+        max-width: 1440px;
+    }
+}
