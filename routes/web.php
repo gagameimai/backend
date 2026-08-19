@@ -227,6 +227,114 @@ Route::group([
                 });
             });
 
+            Route::prefix('car_dashcam')->group(function () {
+                Route::get('/', 'CarDashcamController@index')->name('admin.car_dashcam');
+                Route::post('/', 'CarDashcamController@create');
+
+                Route::prefix('all')->group(function () {
+                    Route::get('/', 'CarDashcamController@all');
+                    Route::patch('sort', 'CarDashcamController@sort');
+                });
+
+                Route::prefix('{id}')->group(function () {
+                    Route::get('/', 'CarDashcamController@find');
+                    Route::patch('/', 'CarDashcamController@update');
+                    Route::delete('/', 'CarDashcamController@delete');
+                    Route::patch('status', 'CarDashcamController@status');
+                    Route::patch('top', 'CarDashcamController@top');
+                });
+            });
+
+            Route::prefix('car_camera')->group(function () {
+                Route::get('/', 'CarCameraController@index')->name('admin.car_camera');
+                Route::post('/', 'CarCameraController@create');
+
+                Route::prefix('all')->group(function () {
+                    Route::get('/', 'CarCameraController@all');
+                    Route::patch('sort', 'CarCameraController@sort');
+                });
+
+                Route::prefix('{id}')->group(function () {
+                    Route::get('/', 'CarCameraController@find');
+                    Route::patch('/', 'CarCameraController@update');
+                    Route::delete('/', 'CarCameraController@delete');
+                    Route::patch('status', 'CarCameraController@status');
+                    Route::patch('top', 'CarCameraController@top');
+                });
+            });
+
+            Route::prefix('car_headrest')->group(function () {
+                Route::get('/', 'CarHeadrestController@index')->name('admin.car_headrest');
+                Route::post('/', 'CarHeadrestController@create');
+
+                Route::prefix('all')->group(function () {
+                    Route::get('/', 'CarHeadrestController@all');
+                    Route::patch('sort', 'CarHeadrestController@sort');
+                });
+
+                Route::prefix('{id}')->group(function () {
+                    Route::get('/', 'CarHeadrestController@find');
+                    Route::patch('/', 'CarHeadrestController@update');
+                    Route::delete('/', 'CarHeadrestController@delete');
+                    Route::patch('status', 'CarHeadrestController@status');
+                    Route::patch('top', 'CarHeadrestController@top');
+                });
+            });
+
+            Route::prefix('car_portable')->group(function () {
+                Route::get('/', 'CarPortableController@index')->name('admin.car_portable');
+                Route::post('/', 'CarPortableController@create');
+
+                Route::prefix('all')->group(function () {
+                    Route::get('/', 'CarPortableController@all');
+                    Route::patch('sort', 'CarPortableController@sort');
+                });
+
+                Route::prefix('{id}')->group(function () {
+                    Route::get('/', 'CarPortableController@find');
+                    Route::patch('/', 'CarPortableController@update');
+                    Route::delete('/', 'CarPortableController@delete');
+                    Route::patch('status', 'CarPortableController@status');
+                    Route::patch('top', 'CarPortableController@top');
+                });
+            });
+
+            Route::prefix('car_audio_accessories')->group(function () {
+                Route::get('/', 'CarAudioAccessoriesController@index')->name('admin.car_audio_accessories');
+                Route::post('/', 'CarAudioAccessoriesController@create');
+
+                Route::prefix('all')->group(function () {
+                    Route::get('/', 'CarAudioAccessoriesController@all');
+                    Route::patch('sort', 'CarAudioAccessoriesController@sort');
+                });
+
+                Route::prefix('{id}')->group(function () {
+                    Route::get('/', 'CarAudioAccessoriesController@find');
+                    Route::patch('/', 'CarAudioAccessoriesController@update');
+                    Route::delete('/', 'CarAudioAccessoriesController@delete');
+                    Route::patch('status', 'CarAudioAccessoriesController@status');
+                    Route::patch('top', 'CarAudioAccessoriesController@top');
+                });
+            });
+
+            Route::prefix('car_head_unit')->group(function () {
+                Route::get('/', 'CarHeadUnitController@index')->name('admin.car_head_unit');
+                Route::post('/', 'CarHeadUnitController@create');
+
+                Route::prefix('all')->group(function () {
+                    Route::get('/', 'CarHeadUnitController@all');
+                    Route::patch('sort', 'CarHeadUnitController@sort');
+                });
+
+                Route::prefix('{id}')->group(function () {
+                    Route::get('/', 'CarHeadUnitController@find');
+                    Route::patch('/', 'CarHeadUnitController@update');
+                    Route::delete('/', 'CarHeadUnitController@delete');
+                    Route::patch('status', 'CarHeadUnitController@status');
+                    Route::patch('top', 'CarHeadUnitController@top');
+                });
+            });
+
             Route::prefix('car_media')->group(function () {
                 Route::get('/', 'CarMediaController@index')->name('admin.car_media');
                 Route::post('/', 'CarMediaController@create');

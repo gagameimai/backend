@@ -79,6 +79,30 @@ return [
                     'name' => '多媒體機',
                     'route' => 'car_media',
                 ],
+                'car_dashcam' => [
+                    'name' => '行車記錄器',
+                    'route' => 'car_dashcam',
+                ],
+                'car_camera' => [
+                    'name' => '鏡頭',
+                    'route' => 'car_camera',
+                ],
+                'car_headrest' => [
+                    'name' => '頭枕螢幕',
+                    'route' => 'car_headrest',
+                ],
+                'car_portable' => [
+                    'name' => '可攜式',
+                    'route' => 'car_portable',
+                ],
+                'car_audio_accessories' => [
+                    'name' => '汽車音響',
+                    'route' => 'car_audio_accessories',
+                ],
+                'car_head_unit' => [
+                    'name' => '車用主機 1/2DIN',
+                    'route' => 'car_head_unit',
+                ],
             ]
         ]
     ],

@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Admin\Product;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\Admin\Product\CarMediaResquest;
-use App\Models\CarMediaModel;
+use App\Http\Requests\Admin\Product\CarHeadUnitResquest;
+use App\Models\CarHeadUnitModel;
+use DB;
 
-class CarMediaController extends Controller
+class CarHeadUnitController extends Controller
 {
     /**
      * 畫面
@@ -16,7 +17,7 @@ class CarMediaController extends Controller
      */
     public function index()
     {
-        return view('admin.product.car_media');
+        return view('admin.product.car_head_unit');
     }
 
     /**
@@ -27,9 +28,7 @@ class CarMediaController extends Controller
      */
     public function all(Request $request)
     {
-        $query = CarMediaModel::orderByDesc('is_top')
-            ->orderByDesc('status')
-            ->orderBy('name', 'ASC');
+        $query = CarHeadUnitModel::orderByDesc('created_at');
 
         if ($request->filled('name')) {
             $query = $query->where('name', 'LIKE', "%{$request->input('name')}%");
@@ -45,21 +44,15 @@ class CarMediaController extends Controller
     /**
      * 新增
      *
-     * @param \App\Http\Requests\Admin\Product\CarMediaResquest $request
+     * @param \App\Http\Requests\Admin\Product\CarHeadUnitResquest $request
      * @return \Illuminate\Http\Response|\Illuminate\Contracts\Routing\ResponseFactory
      */
-    public function create(CarMediaResquest $request)
+    public function create(CarHeadUnitResquest $request)
     {
-        CarMediaModel::create([
+        CarHeadUnitModel::create([
             'type' => $request->input('type'),
             'name' => $request->input('name'),
             'img' => $request->input('img'),
-            'memo' => $request->input('memo'),
-            'size' => $request->input('size'),
-            'hard_drive' => $request->input('hard_drive'),
-            'ram' => $request->input('ram'),
-            'resolution' => $request->input('resolution'),
-            'price' => $request->input('price'),
             'memo_in' => $request->input('memo_in'),
             'content' => $request->input('content'),
             'is_top' => $request->input('is_top'),
@@ -74,13 +67,13 @@ class CarMediaController extends Controller
     /**
      * 更新
      *
-     * @param \App\Http\Requests\Admin\Product\CarMediaResquest $request
+     * @param \App\Http\Requests\Admin\Product\CarHeadUnitResquest $request
      * @param int $id
      * @return \Illuminate\Http\Response|\Illuminate\Contracts\Routing\ResponseFactory
      */
-    public function update(CarMediaResquest $request, $id)
+    public function update(CarHeadUnitResquest $request, $id)
     {
-        $item = CarMediaModel::find($id);
+        $item = CarHeadUnitModel::find($id);
         if (empty($item)) {
             return response([
                 'message' => '查無資料'
@@ -89,12 +82,6 @@ class CarMediaController extends Controller
             $item->type = $request->input('type');
             $item->name = $request->input('name');
             $item->img = $request->input('img');
-            $item->memo = $request->input('memo');
-            $item->size = $request->input('size');
-            $item->hard_drive = $request->input('hard_drive');
-            $item->ram = $request->input('ram');
-            $item->resolution = $request->input('resolution');
-            $item->price = $request->input('price');
             $item->memo_in = $request->input('memo_in');
             $item->content = $request->input('content');
             $item->is_top = $request->input('is_top');
@@ -115,7 +102,7 @@ class CarMediaController extends Controller
      */
     public function delete($id)
     {
-        $item = CarMediaModel::find($id);
+        $item = CarHeadUnitModel::find($id);
         if (empty($item)) {
             return response([
                 'message' => '查無資料'
@@ -137,7 +124,7 @@ class CarMediaController extends Controller
      */
     public function find($id)
     {
-        $item = CarMediaModel::find($id);
+        $item = CarHeadUnitModel::find($id);
         if (empty($item)) {
             return response()->json([
                 'message' => '查無資料'
@@ -162,7 +149,7 @@ class CarMediaController extends Controller
                 'message' => '排序更新失敗。'
             ], 400);
         } else {
-            DB::update(update_when_case_string('car_frame', 'sort', $request->items));
+            DB::update(update_when_case_string('car_head_unit', 'sort', $request->items));
 
             return response([
                 'message' => '排序更新成功。'
@@ -178,7 +165,7 @@ class CarMediaController extends Controller
      */
     public function status($id)
     {
-        $item = CarMediaModel::find($id);
+        $item = CarHeadUnitModel::find($id);
         if (empty($item)) {
             return response()->json([
                 'message' => '查無資料'
@@ -201,7 +188,7 @@ class CarMediaController extends Controller
      */
     public function top($id)
     {
-        $item = CarMediaModel::find($id);
+        $item = CarHeadUnitModel::find($id);
         if (empty($item)) {
             return response()->json([
                 'message' => '查無資料'

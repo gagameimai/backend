@@ -24,4 +24,5 @@ CKEDITOR.editorConfig = function( config ) {
 
 	config.removeButtons = 'Save,NewPage,ExportPdf,Preview,Print,Templates,Paste,PasteText,PasteFromWord,Find,Replace,SelectAll,Scayt,Checkbox,Radio,TextField,Textarea,Select,Button,ImageButton,HiddenField,CopyFormatting,Language,BidiRtl,BidiLtr,Smiley,SpecialChar,Iframe,PageBreak,About,ShowBlocks,Form,CreateDiv';
     config.removePlugins = 'cloudservices,exportpdf';
+	config.allowedContent = true;
 };

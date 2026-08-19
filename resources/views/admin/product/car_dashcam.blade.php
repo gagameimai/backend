@@ -2,10 +2,10 @@
 
 @section('nav.product', 'menu-open')
 @section('unit_master.product', 'active')
-@section('unit.car_media', 'active')
+@section('unit.car_dashcam', 'active')
 
 @section('content')
-    <x-components::unit-title guard="admin" area="product" unit="car_media" />
+    <x-components::unit-title guard="admin" area="product" unit="car_dashcam" />
 
     <div class="content">
         <div class="container-fluid" id="container" v-cloak>
@@ -41,11 +41,10 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label>*類型</label>
-                                            <select class="form-control" v-model="createData.type" required>
-                                                <option value="0">MM</option>
-                                                <option value="1">MM 專用機</option>
-                                                <option value="2">Clarion</option>
+                                            <label>*品牌</label>
+                                            <select class="form-control" v-model="createData.brand" required>
+                                                <option value="0">MM 美邁</option>
+                                                <option value="1">Clarion 歌樂</option>
                                             </select>
                                         </div>
                                     </div>
@@ -70,48 +69,6 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label>*列表簡述</label>
-                                            <textarea class="form-control" rows="8" v-model="createData.memo"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>*尺寸 <span class="text-red">(多個請用半形分號隔開)</span> </label>
-                                            <input type="text" class="form-control" v-model="createData.size" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>*硬碟</label>
-                                            <input type="text" class="form-control" v-model="createData.hard_drive" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>*記憶體</label>
-                                            <input type="text" class="form-control" v-model="createData.ram" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>*解析度</label>
-                                            <input type="text" class="form-control" v-model="createData.resolution" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>*建議售價</label>
-                                            <input type="text" class="form-control" v-model="createData.price" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
                                             <label>*內文簡述</label>
                                             <input type="text" class="form-control" v-model="createData.memo_in" required>
                                         </div>
@@ -120,7 +77,7 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label>*內文敘述</label>
+                                            <label>*產品規格</label>
                                             <textarea class="form-control" id="ckeditor-create"></textarea>
                                         </div>
                                     </div>
@@ -178,11 +135,10 @@
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
-                                            <label>*類型</label>
-                                            <select class="form-control" v-model="editData.type" required>
-                                                <option value="0">MM</option>
-                                                <option value="1">MM 專用機</option>
-                                                <option value="2">Clarion</option>
+                                            <label>*品牌</label>
+                                            <select class="form-control" v-model="editData.brand" required>
+                                                <option value="0">MM 美邁</option>
+                                                <option value="1">Clarion 歌樂</option>
                                             </select>
                                         </div>
                                     </div>
@@ -213,48 +169,6 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label>*列表簡述</label>
-                                            <textarea class="form-control" rows="8" v-model="editData.memo"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label>*尺寸 <span class="text-red">(多個請用半形分號隔開)</span> </label>
-                                            <input type="text" class="form-control" v-model="editData.size" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>*硬碟</label>
-                                            <input type="text" class="form-control" v-model="editData.hard_drive" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>*記憶體</label>
-                                            <input type="text" class="form-control" v-model="editData.ram" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>*解析度</label>
-                                            <input type="text" class="form-control" v-model="editData.resolution" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-3">
-                                        <div class="form-group">
-                                            <label>*建議售價</label>
-                                            <input type="text" class="form-control" v-model="editData.price" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="form-group">
                                             <label>*內文簡述</label>
                                             <input type="text" class="form-control" v-model="editData.memo_in" required>
                                         </div>
@@ -263,8 +177,8 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label>*內文敘述</label>
-                                            <textarea class="form-control" id="ckeditor-edit" v-model="editData.content"></textarea>
+                                            <label>*產品規格</label>
+                                            <textarea class="form-control" id="ckeditor-edit"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -347,7 +261,7 @@
                                 <thead>
                                     <tr>
                                         <th>名稱</th>
-                                        <th style="width: 12%">類型</th>
+                                        <th style="width: 12%">品牌</th>
                                         <th>列表圖片</th>
                                         <th>建立時間</th>
                                         <th style="width: 10%">置頂</th>
@@ -359,7 +273,8 @@
                                     <tr v-for="(item, num) in items" :key="item.id">
                                         <td>@{{ item.name }}</td>
                                         <td>
-                                            <span class="badge badge-info">@{{ typeText(item.type) }}</span>
+                                            <span v-if="item.brand == 1" class="badge badge-info">Clarion 歌樂</span>
+                                            <span v-else class="badge badge-secondary">MM 美邁</span>
                                         </td>
                                         <td>
                                             <img v-if="item.img" :src="item.img" style="height:50px;">
@@ -415,7 +330,7 @@
         var vm = new Vue({
             el: '#container',
             data: {
-                url: '{{ route('admin.car_media') }}',
+                url: '{{ route('admin.car_dashcam') }}',
                 items: {},
                 createData: {},
                 editData: {},
@@ -447,7 +362,7 @@
                 clear: function(method = 'all') {
                     if (method == 'all') {
                         vm.createData = {
-                            type: 0,
+                            brand: 0,
                             is_top: 0,
                             status: 1,
                         };
@@ -606,22 +521,11 @@
                         vm.pagination.total = total < 10 ? total : 10;
                     }
                 },
-                typeText: function(type) {
-                    var map = {0: 'MM', 1: 'MM 專用機', 2: 'Clarion'};
-                    return map[type] !== undefined ? map[type] : '-';
-                },
                 showMessage: function(format, message) {
                     if (format == 'success') {
                         toastr.success(message);
                     } else {
                         toastr.warning(message);
-                    }
-                },
-                changeBrand: function(type) {
-                    if (type == 1) {
-                        vm.createData.car_id = '';
-                    } else {
-                        vm.editData.car_id = '';
                     }
                 }
             }

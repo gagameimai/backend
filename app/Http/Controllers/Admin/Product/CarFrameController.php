@@ -171,7 +171,7 @@ class CarFrameController extends Controller
             'year_start' => $request->input('year_start'),
             'year_end' => $request->input('year_end'),
             'size' => $request->input('size'),
-            'name' => $request->input('name'),
+            'name' => $request->input('name') ?? '',
             'img' => json_encode($imgArr[0]),
             'img1' => json_encode($imgArr[1]),
             'img2' => json_encode($imgArr[2]),
@@ -250,7 +250,7 @@ class CarFrameController extends Controller
             $item->year_start = $request->input('year_start');
             $item->year_end = $request->input('year_end');
             $item->size = $request->input('size');
-            $item->name = $request->input('name');
+            $item->name = $request->input('name') ?? '';
             $item->img = json_encode($imgArr[0]);
             $item->img1 = json_encode($imgArr[1]);
             $item->img2 = json_encode($imgArr[2]);
