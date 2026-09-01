@@ -41,3 +41,5 @@ Route::get('banner', 'BannerController@get');
 Route::get('website', 'WebsiteController@get');
 Route::get('search', 'SearchController@get');
 Route::get('car', 'CarController@get');
+Route::get('recommend_products', 'RecommendProductController@get');
+Route::get('install_cases', 'InstallCaseController@get');

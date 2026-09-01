@@ -47,7 +47,7 @@ class MultiMediaController extends Controller
     public function detail($id)
     {
         try {
-            $result = CarMediaModel::selectRaw('name, img, memo_in, content')->find($id);
+            $result = CarMediaModel::selectRaw('name, img, memo_in, content, size, hard_drive, ram, resolution')->find($id);
             if (empty($result)) {
                 return response()->json([
                     'message' => '查無資料'

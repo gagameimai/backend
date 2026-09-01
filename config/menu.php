@@ -30,6 +30,18 @@ return [
             'route' => 'banner',
         ],
 
+        'recommend_product' => [
+            'icon' => 'fa-solid fa-star',
+            'name' => '首頁精選商品',
+            'route' => 'recommend_product',
+        ],
+
+        'install_case' => [
+            'icon' => 'fa-solid fa-screwdriver-wrench',
+            'name' => '安裝案例',
+            'route' => 'install_case',
+        ],
+
         'resource' => [
             'icon' => 'fa-solid fa-folder-open',
             'name' => '資源下載管理',

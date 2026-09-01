@@ -64,6 +64,43 @@ Route::group([
             });
         });
 
+        // 首頁精選商品
+        Route::prefix('recommend_product')->group(function () {
+            Route::get('/', 'RecommendProductController@index')->name('admin.recommend_product');
+            Route::post('/', 'RecommendProductController@create');
+            Route::get('options', 'RecommendProductController@options');
+
+            Route::prefix('all')->group(function () {
+                Route::get('/', 'RecommendProductController@all');
+                Route::patch('sort', 'RecommendProductController@sort');
+            });
+
+            Route::prefix('{id}')->group(function () {
+                Route::get('/', 'RecommendProductController@find');
+                Route::patch('/', 'RecommendProductController@update');
+                Route::delete('/', 'RecommendProductController@delete');
+                Route::patch('status', 'RecommendProductController@status');
+            });
+        });
+
+        // 安裝案例
+        Route::prefix('install_case')->group(function () {
+            Route::get('/', 'InstallCaseController@index')->name('admin.install_case');
+            Route::post('/', 'InstallCaseController@create');
+
+            Route::prefix('all')->group(function () {
+                Route::get('/', 'InstallCaseController@all');
+                Route::patch('sort', 'InstallCaseController@sort');
+            });
+
+            Route::prefix('{id}')->group(function () {
+                Route::get('/', 'InstallCaseController@find');
+                Route::patch('/', 'InstallCaseController@update');
+                Route::delete('/', 'InstallCaseController@delete');
+                Route::patch('status', 'InstallCaseController@status');
+            });
+        });
+
         // 資源管理
         Route::group(['namespace' => 'Resource'],function () {
             Route::prefix('resource_category')->group(function () {
