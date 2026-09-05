@@ -44,6 +44,13 @@ Route::group([
                 Route::get('all', 'QaController@all');
                 Route::patch('/', 'QaController@update');
             });
+
+            // 關於我們
+            Route::prefix('about')->group(function () {
+                Route::get('/', 'AboutController@index')->name('admin.about');
+                Route::get('all', 'AboutController@all');
+                Route::patch('/', 'AboutController@update');
+            });
         });
 
         // banner

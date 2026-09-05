@@ -53,6 +53,11 @@ class CarHeadUnitController extends Controller
             'type' => $request->input('type'),
             'name' => $request->input('name'),
             'img' => $request->input('img'),
+            'size' => $request->input('size'),
+            'hard_drive' => $request->input('hard_drive'),
+            'ram' => $request->input('ram'),
+            'resolution' => $request->input('resolution'),
+            'price' => $request->input('price'),
             'memo_in' => $request->input('memo_in'),
             'content' => $request->input('content'),
             'is_top' => $request->input('is_top'),
@@ -82,6 +87,11 @@ class CarHeadUnitController extends Controller
             $item->type = $request->input('type');
             $item->name = $request->input('name');
             $item->img = $request->input('img');
+            $item->size = $request->input('size');
+            $item->hard_drive = $request->input('hard_drive');
+            $item->ram = $request->input('ram');
+            $item->resolution = $request->input('resolution');
+            $item->price = $request->input('price');
             $item->memo_in = $request->input('memo_in');
             $item->content = $request->input('content');
             $item->is_top = $request->input('is_top');

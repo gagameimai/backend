@@ -67,6 +67,40 @@
                                     </div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>尺寸 <span class="text-red">(多個請用半形分號隔開)</span> </label>
+                                            <input type="text" class="form-control" v-model="createData.size">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>硬碟</label>
+                                            <input type="text" class="form-control" v-model="createData.hard_drive">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>記憶體</label>
+                                            <input type="text" class="form-control" v-model="createData.ram">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>解析度</label>
+                                            <input type="text" class="form-control" v-model="createData.resolution">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>建議售價</label>
+                                            <input type="text" class="form-control" v-model="createData.price">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <label>*內文簡述</label>
@@ -163,6 +197,40 @@
                                                 </div>
                                                 <div id="edit-preview" style="display: inline-block"></div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>尺寸 <span class="text-red">(多個請用半形分號隔開)</span> </label>
+                                            <input type="text" class="form-control" v-model="editData.size">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>硬碟</label>
+                                            <input type="text" class="form-control" v-model="editData.hard_drive">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>記憶體</label>
+                                            <input type="text" class="form-control" v-model="editData.ram">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>解析度</label>
+                                            <input type="text" class="form-control" v-model="editData.resolution">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <div class="form-group">
+                                            <label>建議售價</label>
+                                            <input type="text" class="form-control" v-model="editData.price">
                                         </div>
                                     </div>
                                 </div>

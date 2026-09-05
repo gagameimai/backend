@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('question', 'QuestionController@get');
+Route::get('about', 'AboutController@get');
 Route::get('resource', 'ResourceController@get');
 Route::get('partner', 'PartnerController@get');
 Route::get('fitting', 'FittingController@get');

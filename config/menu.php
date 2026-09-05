@@ -17,6 +17,10 @@ return [
                     'name' => '常見問題',
                     'route' => 'qa',
                 ],
+                'about' => [
+                    'name' => '關於我們',
+                    'route' => 'about',
+                ],
                 'website' => [
                     'name' => '網站基本設定',
                     'route' => 'website',
