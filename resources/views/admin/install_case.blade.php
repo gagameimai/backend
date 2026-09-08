@@ -63,6 +63,90 @@
                                 <div class="row">
                                     <div class="col-4">
                                         <div class="form-group">
+                                            <label>安裝日期 <span class="text-muted">(前台依此排序，不填則用建立時間)</span></label>
+                                            <input type="date" class="form-control" v-model="createData.installed_at">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>*汽車品牌</label>
+                                            <select class="form-control" v-model="createData.car_brand_id" @change="createData.car_id = ''" required>
+                                                <option value="">請選擇</option>
+                                                <option v-for="row in brands" :value="row.id">
+                                                    @{{ row.name }} @{{ row.status == 0 ? '(停用)' : '' }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>*汽車車款</label>
+                                            <select class="form-control" v-model="createData.car_id" required>
+                                                <option value="">請選擇</option>
+                                                <option v-for="row in cars" v-if="row.car_brand_id == createData.car_brand_id" :value="row.id">
+                                                    @{{ row.name }} @{{ row.status == 0 ? '(停用)' : '' }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>安裝產品 <span class="text-muted">(例：Clarion GL-1002)</span></label>
+                                            <input type="text" class="form-control" v-model="createData.product">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>施工據點</label>
+                                            <input type="text" class="form-control" v-model="createData.dealer">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>客戶需求</label>
+                                            <textarea class="form-control" rows="3" v-model="createData.need"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>施工內容</label>
+                                            <textarea class="form-control" rows="3" v-model="createData.work"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>置頂</label>
+                                            <select class="form-control" v-model="createData.is_pinned">
+                                                <option value="0">否</option>
+                                                <option value="1">是（排在最前面）</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>顯示在首頁 <span class="text-muted">(最多 3 筆)</span></label>
+                                            <select class="form-control" v-model="createData.is_home">
+                                                <option value="0">否</option>
+                                                <option value="1">是</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>首頁排序 <span class="text-muted">(數字小的在前)</span></label>
+                                            <input type="number" class="form-control" v-model="createData.home_sort">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
                                             <label>排序（數字越大越前面）</label>
                                             <input type="number" class="form-control" v-model="createData.sort">
                                         </div>
@@ -135,6 +219,90 @@
                                                 </div>
                                                 <div id="edit-preview" style="display: inline-block"></div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>安裝日期 <span class="text-muted">(前台依此排序，不填則用建立時間)</span></label>
+                                            <input type="date" class="form-control" v-model="editData.installed_at">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>*汽車品牌</label>
+                                            <select class="form-control" v-model="editData.car_brand_id" @change="editData.car_id = ''" required>
+                                                <option value="">請選擇</option>
+                                                <option v-for="row in brands" :value="row.id">
+                                                    @{{ row.name }} @{{ row.status == 0 ? '(停用)' : '' }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>*汽車車款</label>
+                                            <select class="form-control" v-model="editData.car_id" required>
+                                                <option value="">請選擇</option>
+                                                <option v-for="row in cars" v-if="row.car_brand_id == editData.car_brand_id" :value="row.id">
+                                                    @{{ row.name }} @{{ row.status == 0 ? '(停用)' : '' }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>安裝產品 <span class="text-muted">(例：Clarion GL-1002)</span></label>
+                                            <input type="text" class="form-control" v-model="editData.product">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>施工據點</label>
+                                            <input type="text" class="form-control" v-model="editData.dealer">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>客戶需求</label>
+                                            <textarea class="form-control" rows="3" v-model="editData.need"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>施工內容</label>
+                                            <textarea class="form-control" rows="3" v-model="editData.work"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>置頂</label>
+                                            <select class="form-control" v-model="editData.is_pinned">
+                                                <option value="0">否</option>
+                                                <option value="1">是（排在最前面）</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>顯示在首頁 <span class="text-muted">(最多 3 筆)</span></label>
+                                            <select class="form-control" v-model="editData.is_home">
+                                                <option value="0">否</option>
+                                                <option value="1">是</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label>首頁排序 <span class="text-muted">(數字小的在前)</span></label>
+                                            <input type="number" class="form-control" v-model="editData.home_sort">
                                         </div>
                                     </div>
                                 </div>
@@ -226,13 +394,20 @@
                                         <th style="width: 15%">分類</th>
                                         <th>圖片</th>
                                         <th style="width: 8%">排序</th>
+                                        <th style="width: 8%">置頂</th>
+                                        <th style="width: 8%">首頁</th>
                                         <th style="width: 10%">狀態</th>
                                         <th style="width: 15%">功能</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="(item, num) in items" :key="item.id">
-                                        <td>@{{ item.name }}</td>
+                                        <td>
+                                            @{{ item.name }}
+                                            <small v-if="item.brand || item.car" class="d-block text-muted">
+                                                @{{ item.brand ? item.brand.name : '' }} @{{ item.car ? item.car.name : '' }}
+                                            </small>
+                                        </td>
                                         <td>
                                             <span class="badge badge-info">@{{ categoryLabel(item.category) }}</span>
                                         </td>
@@ -240,6 +415,18 @@
                                             <img v-if="item.img" :src="item.img" style="height:50px;">
                                         </td>
                                         <td>@{{ item.sort }}</td>
+                                        <td>
+                                            <a class="btn btn-white btn-sm" href="javascript:void(0)" @click="pinnedItem(item.id)">
+                                                <i v-if="item.is_pinned == 1" class="fas fa-check-circle text-green"></i>
+                                                <i v-else class="fas fa-times-circle text-red"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-white btn-sm" href="javascript:void(0)" @click="homeItem(item.id)">
+                                                <i v-if="item.is_home == 1" class="fas fa-check-circle text-green"></i>
+                                                <i v-else class="fas fa-times-circle text-red"></i>
+                                            </a>
+                                        </td>
                                         <td>
                                             <a v-if="item.status == 1" class="btn btn-white btn-sm" href="javascript:void(0)" @click="statusItem(item.id)">
                                                 <i class="fas fa-check-circle text-green"></i>
@@ -283,6 +470,8 @@
                 items: {},
                 createData: {},
                 editData: {},
+                brands: {},
+                cars: {},
                 categories: [
                     { value: 0, label: '多媒體安卓機' },
                     { value: 1, label: '車型專用機' },
@@ -323,6 +512,16 @@
                             category: 0,
                             sort: 0,
                             status: 1,
+                            installed_at: '',
+                            car_brand_id: '',
+                            car_id: '',
+                            product: '',
+                            dealer: '',
+                            need: '',
+                            work: '',
+                            is_pinned: 0,
+                            is_home: 0,
+                            home_sort: 0,
                         };
                         vm.editData = {};
                         $('#create-img').val('');
@@ -389,6 +588,8 @@
                         }).then(function(response) {
                             let total = Math.ceil(response.data.items.total / response.data.items.per_page);
                             vm.items = response.data.items.data;
+                            vm.brands = response.data.brands;
+                            vm.cars = response.data.cars;
                             vm.search.is_search = response.data.is_search;
                             vm.setPagination(response.data.items.current_page, total);
                         }).catch(function(error) {
@@ -431,6 +632,30 @@
 
                     try {
                         axios.delete(vm.url + '/' + id).then(function(response) {
+                            vm.showMessage('success', response.data.message);
+                            vm.getItems(vm.page, false);
+                        }).catch(function(error) {
+                            vm.showMessage('error', error.response.data.message);
+                        });
+                    } catch (error) {
+                        vm.showMessage('error', error);
+                    }
+                },
+                pinnedItem: function(id) {
+                    try {
+                        axios.patch(vm.url + '/' + id + '/pinned').then(function(response) {
+                            vm.showMessage('success', response.data.message);
+                            vm.getItems(vm.page, false);
+                        }).catch(function(error) {
+                            vm.showMessage('error', error.response.data.message);
+                        });
+                    } catch (error) {
+                        vm.showMessage('error', error);
+                    }
+                },
+                homeItem: function(id) {
+                    try {
+                        axios.patch(vm.url + '/' + id + '/home').then(function(response) {
                             vm.showMessage('success', response.data.message);
                             vm.getItems(vm.page, false);
                         }).catch(function(error) {

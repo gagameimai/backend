@@ -105,6 +105,8 @@ Route::group([
                 Route::patch('/', 'InstallCaseController@update');
                 Route::delete('/', 'InstallCaseController@delete');
                 Route::patch('status', 'InstallCaseController@status');
+                Route::patch('pinned', 'InstallCaseController@pinned');
+                Route::patch('home', 'InstallCaseController@home');
             });
         });
 

@@ -19,7 +19,7 @@ class MultiMediaController extends Controller
             $query = CarMediaModel::selectRaw('id, name, img, memo, size, hard_drive, price, ram, resolution, type')
                 ->where('status', 1);
 
-            // 前端若有帶 type 就過濾（0=MM 多媒體安卓機、1=MM 專用機、2=Clarion），沒帶則回全部
+            // 前端若有帶 type 就過濾（0=MM 多媒體安卓機、1=MM 專用機、2=Clarion GL、3=Clarion 車型專用機），沒帶則回全部
             if ($request->filled('type')) {
                 $query->where('type', $request->input('type'));
             }

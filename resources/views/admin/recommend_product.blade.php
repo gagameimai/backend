@@ -41,7 +41,7 @@
                                         <div class="form-group">
                                             <label>*商品</label>
                                             <select class="form-control" v-model="createData.product_id" :disabled="!createData.product_type" required>
-                                                <option value="" disabled>請先選擇分類</option>
+                                                <option value="" disabled>請先選擇商品</option>
                                                 <option v-for="o in createOptions" :key="o.value" :value="o.value">@{{ o.label }}</option>
                                             </select>
                                         </div>
@@ -100,7 +100,7 @@
                                         <div class="form-group">
                                             <label>*商品</label>
                                             <select class="form-control" v-model="editData.product_id" :disabled="!editData.product_type" required>
-                                                <option value="" disabled>請先選擇分類</option>
+                                                <option value="" disabled>請先選擇商品</option>
                                                 <option v-for="o in editOptions" :key="o.value" :value="o.value">@{{ o.label }}</option>
                                             </select>
                                         </div>

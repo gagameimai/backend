@@ -186,7 +186,7 @@ class RecommendProductResolver
             case 'car_audio_accessories':
                 return "/clarion/audioAccessoriesDetail/{$id}";
             case 'car_head_unit':
-                return "/clarion/headUnitDetail/{$id}";
+                return "/headUnitDetail/{$id}";
             default:
                 return '/';
         }

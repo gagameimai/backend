@@ -46,6 +46,7 @@
                                                 <option value="0">MM</option>
                                                 <option value="1">MM 專用機</option>
                                                 <option value="2">Clarion</option>
+                                                <option value="3">Clarion 車型專用機</option>
                                             </select>
                                         </div>
                                     </div>
@@ -183,6 +184,7 @@
                                                 <option value="0">MM</option>
                                                 <option value="1">MM 專用機</option>
                                                 <option value="2">Clarion</option>
+                                                <option value="3">Clarion 車型專用機</option>
                                             </select>
                                         </div>
                                     </div>
@@ -607,7 +609,7 @@
                     }
                 },
                 typeText: function(type) {
-                    var map = {0: 'MM', 1: 'MM 專用機', 2: 'Clarion'};
+                    var map = {0: 'MM', 1: 'MM 專用機', 2: 'Clarion', 3: 'Clarion 車型專用機'};
                     return map[type] !== undefined ? map[type] : '-';
                 },
                 showMessage: function(format, message) {

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CarBrandModel;
+use App\Models\CarModel;
 
 use DateTimeInterface;
 
@@ -48,5 +50,21 @@ class InstallCaseModel extends Model
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
+    }
+
+    /**
+     * 汽車品牌（沿用車框那兩張表）
+     */
+    public function brand()
+    {
+        return $this->belongsTo(CarBrandModel::class, 'car_brand_id', 'id');
+    }
+
+    /**
+     * 汽車車款
+     */
+    public function car()
+    {
+        return $this->belongsTo(CarModel::class, 'car_id', 'id');
     }
 }
