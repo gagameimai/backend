@@ -46,6 +46,12 @@ return [
             'route' => 'install_case',
         ],
 
+        'list_banner' => [
+            'icon' => 'fa-solid fa-panorama',
+            'name' => '產品頁 Banner 管理',
+            'route' => 'list_banner',
+        ],
+
         'resource' => [
             'icon' => 'fa-solid fa-folder-open',
             'name' => '資源下載管理',

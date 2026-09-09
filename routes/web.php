@@ -110,6 +110,13 @@ Route::group([
             });
         });
 
+        // 列表頁 Banner 管理
+        Route::prefix('list_banner')->group(function () {
+            Route::get('/', 'ListBannerController@index')->name('admin.list_banner');
+            Route::get('all', 'ListBannerController@all');
+            Route::patch('{page_key}/{type_key}', 'ListBannerController@update');
+        });
+
         // 資源管理
         Route::group(['namespace' => 'Resource'],function () {
             Route::prefix('resource_category')->group(function () {

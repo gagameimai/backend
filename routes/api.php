@@ -45,3 +45,4 @@ Route::get('car', 'CarController@get');
 Route::get('recommend_products', 'RecommendProductController@get');
 Route::get('install_cases', 'InstallCaseController@get');
 Route::get('install_cases/{id}', 'InstallCaseController@detail');
+Route::get('list_banner', 'ListBannerController@get');
