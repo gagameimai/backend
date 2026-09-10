@@ -58,6 +58,14 @@
                                     </div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>建議售價</label>
+                                            <input type="text" class="form-control" v-model="createData.price">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group">
                                             <label>*內文簡述</label>
@@ -145,6 +153,14 @@
                                                 </div>
                                                 <div id="edit-preview" style="display: inline-block"></div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>建議售價</label>
+                                            <input type="text" class="form-control" v-model="editData.price">
                                         </div>
                                     </div>
                                 </div>

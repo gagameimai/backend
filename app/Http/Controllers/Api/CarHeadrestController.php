@@ -16,7 +16,7 @@ class CarHeadrestController extends Controller
     public function get(Request $request)
     {
         try {
-            $result = CarHeadrestModel::selectRaw('id, name, img')
+            $result = CarHeadrestModel::selectRaw('id, name, img, price')
                 ->where('status', 1)
                 ->orderBy('is_top', 'ASC')
                 ->orderBy('sort', 'ASC')
@@ -43,7 +43,7 @@ class CarHeadrestController extends Controller
     public function detail(Request $request, $id)
     {
         try {
-            $result = CarHeadrestModel::selectRaw('name, img, memo_in, content')->find($id);
+            $result = CarHeadrestModel::selectRaw('name, img, memo_in, content, price')->find($id);
             if (empty($result)) {
                 return response()->json([
                     'message' => '查無資料'

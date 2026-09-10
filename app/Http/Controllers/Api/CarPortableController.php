@@ -16,7 +16,7 @@ class CarPortableController extends Controller
     public function get(Request $request)
     {
         try {
-            $result = CarPortableModel::selectRaw('id, name, img')
+            $result = CarPortableModel::selectRaw('id, name, img, price')
                 ->where('status', 1)
                 ->orderBy('is_top', 'ASC')
                 ->orderBy('sort', 'ASC')
@@ -43,7 +43,7 @@ class CarPortableController extends Controller
     public function detail(Request $request, $id)
     {
         try {
-            $result = CarPortableModel::selectRaw('name, img, memo_in, content')->find($id);
+            $result = CarPortableModel::selectRaw('name, img, memo_in, content, price')->find($id);
             if (empty($result)) {
                 return response()->json([
                     'message' => '查無資料'

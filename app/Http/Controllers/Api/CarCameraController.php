@@ -16,7 +16,7 @@ class CarCameraController extends Controller
     public function get(Request $request)
     {
         try {
-            $query = CarCameraModel::selectRaw('id, name, img')
+            $query = CarCameraModel::selectRaw('id, name, img, price')
                 ->where('status', 1);
 
             // 依前端傳來的 brand 過濾（0=MM、1=Clarion）；沒帶則回全部
@@ -47,7 +47,7 @@ class CarCameraController extends Controller
     public function detail(Request $request, $id)
     {
         try {
-            $query = CarCameraModel::selectRaw('name, img, memo_in, content');
+            $query = CarCameraModel::selectRaw('name, img, memo_in, content, price');
 
             // 有帶 brand 就一併比對，確保 mm 網址不會取到 clarion 的資料
             if ($request->filled('brand')) {

@@ -17,7 +17,7 @@ class CarAudioAccessoriesController extends Controller
     public function get(Request $request)
     {
         try {
-            $query = CarAudioAccessoriesModel::selectRaw('id, name, img, type')
+            $query = CarAudioAccessoriesModel::selectRaw('id, name, img, type, price')
                 ->where('status', 1);
 
             // 前端若有帶 type 就過濾，沒帶則回全部（由前台分區）
@@ -48,7 +48,7 @@ class CarAudioAccessoriesController extends Controller
     public function detail(Request $request, $id)
     {
         try {
-            $result = CarAudioAccessoriesModel::selectRaw('name, img, memo_in, content')->find($id);
+            $result = CarAudioAccessoriesModel::selectRaw('name, img, memo_in, content, price')->find($id);
             if (empty($result)) {
                 return response()->json([
                     'message' => '查無資料'

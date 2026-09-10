@@ -64,7 +64,15 @@
                                                     </a>
                                                 </span>
                                             </div>
-                                            <div id="create-preview" style="margin-top:10px; margin-bottom:10px"></div>
+                            <div id="create-preview" style="margin-top:10px; margin-bottom:10px"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>建議售價</label>
+                                            <input type="text" class="form-control" v-model="createData.price">
                                         </div>
                                     </div>
                                 </div>
@@ -167,6 +175,14 @@
                                                 </div>
                                                 <div id="edit-preview" style="display: inline-block"></div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <label>建議售價</label>
+                                            <input type="text" class="form-control" v-model="editData.price">
                                         </div>
                                     </div>
                                 </div>

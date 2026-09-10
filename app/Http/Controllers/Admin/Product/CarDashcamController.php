@@ -53,6 +53,7 @@ class CarDashcamController extends Controller
             'brand' => $request->input('brand'),
             'name' => $request->input('name'),
             'img' => $request->input('img'),
+            'price' => $request->input('price'),
             'memo_in' => $request->input('memo_in'),
             'content' => $request->input('content'),
             'is_top' => $request->input('is_top'),
@@ -82,6 +83,7 @@ class CarDashcamController extends Controller
             $item->brand = $request->input('brand');
             $item->name = $request->input('name');
             $item->img = $request->input('img');
+            $item->price = $request->input('price');
             $item->memo_in = $request->input('memo_in');
             $item->content = $request->input('content');
             $item->is_top = $request->input('is_top');
