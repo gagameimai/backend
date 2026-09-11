@@ -19,6 +19,41 @@
                                 </h3>
                             </div>
                             <div class="card-body">
+                            <div class="callout callout-info" style="margin:0 0 1rem 0">
+                                <h5 style="margin-bottom:.5rem"><i class="fas fa-info-circle"></i> 首頁 Banner 尺寸說明（請先看這段）</h5>
+                                <p style="margin-bottom:.35rem">
+                                    首頁 Banner 是<b>滿版</b>顯示（撐滿整個瀏覽器畫面高度，用 object-fit: cover 裁切），
+                                    所以<b>電腦版與手機版要各上傳一張</b>。
+                                </p>
+                                <table class="table table-sm table-bordered" style="background:#fff;margin-bottom:.5rem">
+                                    <thead>
+                                        <tr><th style="width:22%">欄位</th><th style="width:24%">建議尺寸</th><th>說明</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>圖片（電腦版）</td>
+                                            <td><b>1920 × 1080</b>（16:9）</td>
+                                            <td>桌機、平板橫向都吃這張。JPG 或 WebP，壓在 300KB 以內。</td>
+                                        </tr>
+                                        <tr>
+                                            <td>圖片（手機版）</td>
+                                            <td><b>1080 × 2160</b>（1:2 直式）</td>
+                                            <td>螢幕寬度 640px 以下自動改吃這張。<b>留空的話會沿用電腦版那張</b>，但橫圖在手機會被左右各裁掉約 35%，圖上的字會被切掉。</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p style="margin-bottom:.35rem"><b>做圖時要注意：</b></p>
+                                <ul style="margin-bottom:.35rem;padding-left:1.2rem">
+                                    <li>重要的字與主體<b>集中在畫面中間 60% 的範圍</b>，兩邊、上下都可能被裁掉。</li>
+                                    <li>底部大約 190px 會蓋上一層由下往上的暗漸層（給 SCROLL 指示與輪播圓點用），<b>不要把字放在最下面</b>。</li>
+                                    <li>畫面正下方還會壓上「車型查詢」浮動卡片，也要留白。</li>
+                                    <li>可以上傳多張，會自動輪播；排序欄位小的排前面。</li>
+                                </ul>
+                                <p style="margin-bottom:0">
+                                    <b>色系（VIS）：</b>深色底 #0D1016 系、重點色用 Clarion Azzurro #007ABE。
+                                    不要整塊染藍；MM 的橘 #F28729 與藍紫 #AF47D2 只用在 MM 專頁，首頁不用。
+                                </p>
+                            </div>
                                 <div class="row">
                                     <div class="col-12 col-sm-6">
                                         <div class="form-group">
@@ -36,9 +71,9 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-12 col-md-6">
                                         <div class="form-group">
-                                            <label>*圖片</label>
+                                            <label>*圖片（電腦版）<span class="text-muted">　建議 1920 × 1080（16:9）</span></label>
                                             <div class="input-group">
                                                 <input id="create-img" class="form-control" type="text" readonly>
                                                 <span class="input-group-btn">
@@ -48,7 +83,24 @@
                                                     </a>
                                                 </span>
                                             </div>
+                                            <small class="form-text text-muted">桌機、平板橫向吃這張。JPG／WebP，壓在 300KB 以內。</small>
                                             <div id="create-preview" style="margin-top:10px; margin-bottom:10px"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="form-group">
+                                            <label>圖片（手機版）<span class="text-muted">　建議 1080 × 2160（直式）</span></label>
+                                            <div class="input-group">
+                                                <input id="create-img-mobile" class="form-control" type="text" readonly>
+                                                <span class="input-group-btn">
+                                                    <a id="lfm-create-mobile" data-input="create-img-mobile" data-preview="create-preview-mobile" class="btn btn-block btn-default">
+                                                        <i class="fa fa-picture-o"></i>
+                                                        選取檔案
+                                                    </a>
+                                                </span>
+                                            </div>
+                                            <small class="form-text text-muted">螢幕寬 640px 以下吃這張。留空會沿用電腦版，但橫圖在手機會被左右各裁約 35%。</small>
+                                            <div id="create-preview-mobile" style="margin-top:10px; margin-bottom:10px"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -85,6 +137,41 @@
                                 </h3>
                             </div>
                             <div class="card-body">
+                            <div class="callout callout-info" style="margin:0 0 1rem 0">
+                                <h5 style="margin-bottom:.5rem"><i class="fas fa-info-circle"></i> 首頁 Banner 尺寸說明（請先看這段）</h5>
+                                <p style="margin-bottom:.35rem">
+                                    首頁 Banner 是<b>滿版</b>顯示（撐滿整個瀏覽器畫面高度，用 object-fit: cover 裁切），
+                                    所以<b>電腦版與手機版要各上傳一張</b>。
+                                </p>
+                                <table class="table table-sm table-bordered" style="background:#fff;margin-bottom:.5rem">
+                                    <thead>
+                                        <tr><th style="width:22%">欄位</th><th style="width:24%">建議尺寸</th><th>說明</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>圖片（電腦版）</td>
+                                            <td><b>1920 × 1080</b>（16:9）</td>
+                                            <td>桌機、平板橫向都吃這張。JPG 或 WebP，壓在 300KB 以內。</td>
+                                        </tr>
+                                        <tr>
+                                            <td>圖片（手機版）</td>
+                                            <td><b>1080 × 2160</b>（1:2 直式）</td>
+                                            <td>螢幕寬度 640px 以下自動改吃這張。<b>留空的話會沿用電腦版那張</b>，但橫圖在手機會被左右各裁掉約 35%，圖上的字會被切掉。</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p style="margin-bottom:.35rem"><b>做圖時要注意：</b></p>
+                                <ul style="margin-bottom:.35rem;padding-left:1.2rem">
+                                    <li>重要的字與主體<b>集中在畫面中間 60% 的範圍</b>，兩邊、上下都可能被裁掉。</li>
+                                    <li>底部大約 190px 會蓋上一層由下往上的暗漸層（給 SCROLL 指示與輪播圓點用），<b>不要把字放在最下面</b>。</li>
+                                    <li>畫面正下方還會壓上「車型查詢」浮動卡片，也要留白。</li>
+                                    <li>可以上傳多張，會自動輪播；排序欄位小的排前面。</li>
+                                </ul>
+                                <p style="margin-bottom:0">
+                                    <b>色系（VIS）：</b>深色底 #0D1016 系、重點色用 Clarion Azzurro #007ABE。
+                                    不要整塊染藍；MM 的橘 #F28729 與藍紫 #AF47D2 只用在 MM 專頁，首頁不用。
+                                </p>
+                            </div>
                                 <div class="row">
                                     <div class="col-12 col-sm-6">
                                         <div class="form-group">
@@ -102,9 +189,9 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-12 col-md-6">
                                         <div class="form-group">
-                                            <label>*圖片</label>
+                                            <label>*圖片（電腦版）<span class="text-muted">　建議 1920 × 1080（16:9）</span></label>
                                             <div class="input-group">
                                                 <input id="edit-img" class="form-control" type="text" :value="editData.img" readonly>
                                                 <span class="input-group-btn">
@@ -114,8 +201,27 @@
                                                     </a>
                                                 </span>
                                             </div>
+                                            <small class="form-text text-muted">桌機、平板橫向吃這張。JPG／WebP，壓在 300KB 以內。</small>
                                             <div id="edit-preview" style="margin-top:10px; margin-bottom:10px">
                                                 <img v-if="editData.img != null" :src="editData.img" style="height:10rem;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <div class="form-group">
+                                            <label>圖片（手機版）<span class="text-muted">　建議 1080 × 2160（直式）</span></label>
+                                            <div class="input-group">
+                                                <input id="edit-img-mobile" class="form-control" type="text" :value="editData.img_mobile" readonly>
+                                                <span class="input-group-btn">
+                                                    <a id="lfm-edit-mobile" data-input="edit-img-mobile" data-preview="edit-preview-mobile" class="btn btn-block btn-default">
+                                                        <i class="fa fa-picture-o"></i>
+                                                        選取檔案
+                                                    </a>
+                                                </span>
+                                            </div>
+                                            <small class="form-text text-muted">螢幕寬 640px 以下吃這張。留空會沿用電腦版，但橫圖在手機會被左右各裁約 35%。</small>
+                                            <div id="edit-preview-mobile" style="margin-top:10px; margin-bottom:10px">
+                                                <img v-if="editData.img_mobile != null" :src="editData.img_mobile" style="height:10rem;">
                                             </div>
                                         </div>
                                     </div>
@@ -163,7 +269,8 @@
                                     <tr>
                                         <th>名稱</th>
                                         <th>外部連結</th>
-                                        <th>圖片</th>
+                                        <th>圖片（電腦版）</th>
+                                        <th>圖片（手機版）</th>
                                         <th>建立時間</th>
                                         <th style="width: 10%">
                                             排序
@@ -183,6 +290,10 @@
                                         </td>
                                         <td>
                                             <img :src="item.img" style="height:50px;">
+                                        </td>
+                                        <td>
+                                            <img v-if="item.img_mobile" :src="item.img_mobile" style="height:50px;">
+                                            <span v-else class="text-muted" style="font-size:12px">未設定<br>（沿用電腦版）</span>
                                         </td>
                                         <td>@{{ item.created_at }}</td>
                                         <td>
@@ -244,7 +355,9 @@
             },
             mounted: function() {
                 $('#lfm-create').filemanager('file', {prefix: 'filemanager'});
+                $('#lfm-create-mobile').filemanager('file', {prefix: 'filemanager'});
                 $('#lfm-edit').filemanager('file', {prefix: 'filemanager'});
+                $('#lfm-edit-mobile').filemanager('file', {prefix: 'filemanager'});
             },
             methods: {
                 clear: function() {
@@ -254,7 +367,10 @@
                     vm.editData = {};
                     $('#create-img').val('');
                     $('#create-preview').empty();
+                    $('#create-img-mobile').val('');
+                    $('#create-preview-mobile').empty();
                     $('#edit-img').val('');
+                    $('#edit-img-mobile').val('');
                 },
                 open: function(active = '', id = '') {
                     vm.clear();
@@ -317,6 +433,7 @@
                 createItem: function() {
                     try {
                         vm.createData.img = $('#create-img').val();
+                        vm.createData.img_mobile = $('#create-img-mobile').val();
                         axios.post(vm.url, vm.createData).then(function(response) {
                             vm.showMessage('success', response.data.message);
                             vm.getItems();
@@ -331,6 +448,7 @@
                 updateItem: function(id) {
                     try {
                         vm.editData.img = $('#edit-img').val();
+                        vm.editData.img_mobile = $('#edit-img-mobile').val();
                         axios.patch(vm.url + '/' + id, vm.editData).then(function(response) {
                             vm.showMessage('success', response.data.message);
                             vm.getItems(vm.page, false);

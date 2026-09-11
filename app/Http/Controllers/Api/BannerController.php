@@ -17,7 +17,7 @@ class BannerController extends Controller
     {
         try {
             return response()->json([
-                'result' => BannerModel::selectRaw('name, img, url')
+                'result' => BannerModel::selectRaw('name, img, img_mobile, url')
                     ->where('status', 1)
                     ->orderBy('sort', 'ASC')
                     ->get()

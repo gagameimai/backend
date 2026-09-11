@@ -17,6 +17,7 @@ class BannerResquest extends BaseRequest
             'name' => 'required',
             'url' => 'nullable|url',
             'img' => 'required',
+            'img_mobile' => 'nullable',
             'status' => 'required|integer',
         ];
     }
@@ -31,7 +32,8 @@ class BannerResquest extends BaseRequest
         return [
             'name' => '名稱',
             'url' => '外部連結',
-            'img' => '圖片',
+            'img' => '圖片（電腦版）',
+            'img_mobile' => '圖片（手機版）',
             'status' => '狀態',
         ];
     }

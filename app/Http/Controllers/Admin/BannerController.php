@@ -47,6 +47,7 @@ class BannerController extends Controller
             'name' => $request->input('name'),
             'url' => $request->input('url'),
             'img' => $request->input('img'),
+            'img_mobile' => $request->input('img_mobile'),
             'status' => $request->input('status'),
         ]);
 
@@ -73,6 +74,7 @@ class BannerController extends Controller
             $item->name = $request->input('name');
             $item->url = $request->input('url');
             $item->img = $request->input('img');
+            $item->img_mobile = $request->input('img_mobile');
             $item->status = $request->input('status');
             $item->save();
 
