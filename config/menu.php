@@ -52,6 +52,12 @@ return [
             'route' => 'list_banner',
         ],
 
+        'home_section' => [
+            'icon' => 'fa-solid fa-layer-group',
+            'name' => '首頁滿版區塊管理',
+            'route' => 'home_section',
+        ],
+
         'resource' => [
             'icon' => 'fa-solid fa-folder-open',
             'name' => '資源下載管理',

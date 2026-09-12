@@ -42,6 +42,13 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                                <details style="margin-bottom:.6rem">
+                                    <summary style="cursor:pointer;color:#0b5c8a;font-weight:700">看安全區範例圖（電腦版／手機版）</summary>
+                                    <div class="row" style="margin-top:.5rem">
+                                        <div class="col-12 col-md-8"><img src="{{ asset('images/admin-guide/home-banner-desktop-1920x1080.png') }}" style="width:100%;border:1px solid #ccd;border-radius:6px"></div>
+                                        <div class="col-6 col-md-2"><img src="{{ asset('images/admin-guide/home-banner-mobile-1080x2160.png') }}" style="width:100%;border:1px solid #ccd;border-radius:6px"></div>
+                                    </div>
+                                </details>
                                 <p style="margin-bottom:.35rem"><b>做圖時要注意：</b></p>
                                 <ul style="margin-bottom:.35rem;padding-left:1.2rem">
                                     <li>重要的字與主體<b>集中在畫面中間 60% 的範圍</b>，兩邊、上下都可能被裁掉。</li>
@@ -160,6 +167,13 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                                <details style="margin-bottom:.6rem">
+                                    <summary style="cursor:pointer;color:#0b5c8a;font-weight:700">看安全區範例圖（電腦版／手機版）</summary>
+                                    <div class="row" style="margin-top:.5rem">
+                                        <div class="col-12 col-md-8"><img src="{{ asset('images/admin-guide/home-banner-desktop-1920x1080.png') }}" style="width:100%;border:1px solid #ccd;border-radius:6px"></div>
+                                        <div class="col-6 col-md-2"><img src="{{ asset('images/admin-guide/home-banner-mobile-1080x2160.png') }}" style="width:100%;border:1px solid #ccd;border-radius:6px"></div>
+                                    </div>
+                                </details>
                                 <p style="margin-bottom:.35rem"><b>做圖時要注意：</b></p>
                                 <ul style="margin-bottom:.35rem;padding-left:1.2rem">
                                     <li>重要的字與主體<b>集中在畫面中間 60% 的範圍</b>，兩邊、上下都可能被裁掉。</li>

@@ -54,7 +54,7 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label>*列表圖片</label>
+                                            <label>*列表圖片 <span class="text-muted">　建議 1200 × 1200 正方形，白底或去背 PNG，主體佔 80%，300KB 內。電腦版／手機版共用一張（前台等比縮放不裁切）</span></span> <a href="{{ asset('images/admin-guide/product-1200x1200.png') }}" target="_blank" style="white-space:nowrap">（看範例圖）</a></label>
                                             <div class="input-group">
                                                 <input id="create-img" class="form-control" type="text" readonly>
                                                 <span class="input-group-btn">
@@ -158,7 +158,7 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label>*列表圖片</label>
+                                            <label>*列表圖片 <span class="text-muted">　建議 1200 × 1200 正方形，白底或去背 PNG，主體佔 80%，300KB 內。電腦版／手機版共用一張（前台等比縮放不裁切）</span></span> <a href="{{ asset('images/admin-guide/product-1200x1200.png') }}" target="_blank" style="white-space:nowrap">（看範例圖）</a></label>
                                             <div class="input-group">
                                                 <input id="edit-img" class="form-control" type="text" :value="editData.img" readonly>
                                                 <span class="input-group-btn">

@@ -43,6 +43,7 @@ class ListBannerController extends Controller
                     'type_key' => (string) $typeKey,
                     'type_name' => $typeName,
                     'img' => $found->img ?? null,
+                    'img_mobile' => $found->img_mobile ?? null,
                 ];
             }
         }
@@ -78,7 +79,7 @@ class ListBannerController extends Controller
 
         ListBannerModel::updateOrCreate(
             ['page_key' => $page_key, 'type_key' => $type_key],
-            ['img' => $request->input('img') ?: null]
+            ['img' => $request->input('img') ?: null, 'img_mobile' => $request->input('img_mobile') ?: null]
         );
 
         return response()->json([

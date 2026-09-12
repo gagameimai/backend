@@ -15,6 +15,7 @@ class ListBannerController extends Controller
      * page 對應頁面代碼，詳見 config/list_banner.php；type 該頁面只有單一 banner 時可省略（預設 'default'）
      *
      * 查無設定或沒有上傳圖片時，img 回傳 null，前台改用預設漸層背景。
+     * img_mobile 為手機版（16:9），留空時前台沿用 img。
      *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response|\Illuminate\Contracts\Routing\ResponseFactory
@@ -32,7 +33,7 @@ class ListBannerController extends Controller
             $typeKey = $request->input('type');
             $typeKey = $typeKey === null || $typeKey === '' ? 'default' : (string) $typeKey;
 
-            $item = ListBannerModel::selectRaw('img')
+            $item = ListBannerModel::selectRaw('img, img_mobile')
                 ->where('page_key', $pageKey)
                 ->where('type_key', $typeKey)
                 ->first();
@@ -40,6 +41,7 @@ class ListBannerController extends Controller
             return response()->json([
                 'result' => [
                     'img' => $item->img ?? null,
+                    'img_mobile' => $item->img_mobile ?? null,
                 ]
             ]);
         } catch (\Throwable $th) {

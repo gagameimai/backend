@@ -76,7 +76,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-8">
-                                        <label>列表圖片</label>
+                                        <label>列表圖片 <span class="text-muted">　建議 1200 × 1200 正方形，白底或去背 PNG，主體佔 80%。電腦版／手機版共用</span></span> <a href="{{ asset('images/admin-guide/product-1200x1200.png') }}" target="_blank" style="white-space:nowrap">（看範例圖）</a></label>
                                     </div>
                                     <div class="col-sm-4">
                                         <label>浮水印位置</label>
@@ -113,7 +113,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-8">
-                                        <label>車框概觀</label>
+                                        <label>車框概觀 <span class="text-muted">　建議 1200 × 1200 正方形，白底或去背，主圖用。電腦版／手機版共用</span></span> <a href="{{ asset('images/admin-guide/product-1200x1200.png') }}" target="_blank" style="white-space:nowrap">（看範例圖）</a></label>
                                     </div>
                                     <div class="col-sm-4">
                                         <label>浮水印位置</label>
@@ -150,7 +150,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-8">
-                                        <label>車框配件</label>
+                                        <label>車框配件 <span class="text-muted">　建議 1600 × 1200（4:3）實拍，前台縮圖會裁成 4:3，主體置中。電腦版／手機版共用</span></span> <a href="{{ asset('images/admin-guide/carframe-photo-1600x1200.png') }}" target="_blank" style="white-space:nowrap">（看範例圖）</a></label>
                                     </div>
                                     <div class="col-sm-4">
                                         <label>浮水印位置</label>
@@ -187,7 +187,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-8">
-                                        <label>實際安裝</label>
+                                        <label>實際安裝 <span class="text-muted">　建議 1600 × 1200（4:3）實拍，前台縮圖會裁成 4:3，主體置中。電腦版／手機版共用</span></span> <a href="{{ asset('images/admin-guide/carframe-photo-1600x1200.png') }}" target="_blank" style="white-space:nowrap">（看範例圖）</a></label>
                                     </div>
                                     <div class="col-sm-4">
                                         <label>浮水印位置</label>

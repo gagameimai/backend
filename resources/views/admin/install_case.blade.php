@@ -46,7 +46,7 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label>*案例圖片 <span class="text-muted">(建議比例 16:10)</span></label>
+                                            <label>*案例圖片 <span class="text-muted">　建議 1600 × 1000（16:10）實拍，主體置中，300KB 內。電腦版／手機版共用一張（首頁卡、列表卡、內頁都是 16:10 裁切）</span></span> <a href="{{ asset('images/admin-guide/case-1600x1000.png') }}" target="_blank" style="white-space:nowrap">（看範例圖）</a></label>
                                             <div class="input-group">
                                                 <input id="create-img" class="form-control" type="text" readonly>
                                                 <span class="input-group-btn">
@@ -202,7 +202,7 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label>*案例圖片 <span class="text-muted">(建議比例 16:10)</span></label>
+                                            <label>*案例圖片 <span class="text-muted">　建議 1600 × 1000（16:10）實拍，主體置中，300KB 內。電腦版／手機版共用一張（首頁卡、列表卡、內頁都是 16:10 裁切）</span></span> <a href="{{ asset('images/admin-guide/case-1600x1000.png') }}" target="_blank" style="white-space:nowrap">（看範例圖）</a></label>
                                             <div class="input-group">
                                                 <input id="edit-img" class="form-control" type="text" :value="editData.img" readonly>
                                                 <span class="input-group-btn">

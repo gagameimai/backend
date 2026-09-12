@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use App\Http\Requests\BaseRequest;
 
-class ListBannerResquest extends BaseRequest
+class HomeSectionResquest extends BaseRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,6 +14,7 @@ class ListBannerResquest extends BaseRequest
     public function rules()
     {
         return [
+            'content' => 'nullable|string',
             'img' => 'nullable|string',
             'img_mobile' => 'nullable|string',
         ];
@@ -27,8 +28,9 @@ class ListBannerResquest extends BaseRequest
     public function attributes()
     {
         return [
-            'img' => 'Banner 圖片（電腦版）',
-            'img_mobile' => 'Banner 圖片（手機版）',
+            'content' => '區塊內容',
+            'img' => '背景圖（電腦版）',
+            'img_mobile' => '背景圖（手機版）',
         ];
     }
 }

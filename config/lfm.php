@@ -58,6 +58,7 @@ return [
                 'image/pjpeg',
                 'image/png',
                 'image/gif',
+                'image/webp',
                 'application/pdf',
                 'text/plain',
             ],
@@ -74,6 +75,7 @@ return [
                 'image/pjpeg',
                 'image/png',
                 'image/gif',
+                'image/webp',
             ],
         ],
     ],
@@ -131,10 +133,14 @@ return [
     'thumb_folder_name'        => 'thumbs',
 
     // Create thumbnails automatically only for listed types.
+    // gif／webp 一併補上：should_create_thumbnails 現在雖然是關的，但先補齊白名單，
+    // 之後若打開縮圖功能，這兩種格式才不會漏掉。
     'raster_mimetypes'         => [
         'image/jpeg',
         'image/pjpeg',
         'image/png',
+        'image/gif',
+        'image/webp',
     ],
 
     'thumb_img_width'          => 200, // px
@@ -158,6 +164,7 @@ return [
         'jpg'  => 'JPEG Image',
         'jpeg' => 'JPEG Image',
         'png'  => 'PNG Image',
+        'webp' => 'WebP Image',
         'ppt'  => 'Microsoft PowerPoint',
         'pptx' => 'Microsoft PowerPoint',
     ],

@@ -117,6 +117,13 @@ Route::group([
             Route::patch('{page_key}/{type_key}', 'ListBannerController@update');
         });
 
+        // 首頁滿版區塊管理（clarion / MM 美邁 / 尾端 CTA 3 段滿版區的內容與背景圖）
+        Route::prefix('home_section')->group(function () {
+            Route::get('/', 'HomeSectionController@index')->name('admin.home_section');
+            Route::get('all', 'HomeSectionController@all');
+            Route::patch('{section_key}', 'HomeSectionController@update');
+        });
+
         // 資源管理
         Route::group(['namespace' => 'Resource'],function () {
             Route::prefix('resource_category')->group(function () {
