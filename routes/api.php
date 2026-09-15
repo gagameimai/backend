@@ -47,3 +47,6 @@ Route::get('install_cases', 'InstallCaseController@get');
 Route::get('install_cases/{id}', 'InstallCaseController@detail');
 Route::get('list_banner', 'ListBannerController@get');
 Route::get('home_section', 'HomeSectionController@get');
+
+// Agent API 快速通道（給業主的 AI agent 用，金鑰驗證，見 routes/agent.php）
+require __DIR__ . '/agent.php';

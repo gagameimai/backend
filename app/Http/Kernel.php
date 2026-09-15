@@ -73,5 +73,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         'role.auth' => \App\Http\Middleware\RoleAuth::class,
+        'agent.key' => \App\Http\Middleware\AgentKeyAuth::class,
     ];
 }
