@@ -727,6 +727,11 @@
             },
             created: function() {
                 this.getItems();
+                // 讓瀏覽器「上一頁」能回到列表：切換到新增/編輯畫面時有登記一筆瀏覽器紀錄（見 open()），
+                // 按上一頁會觸發這裡，直接切回列表，而不是離開這一頁。
+                window.addEventListener('popstate', function() {
+                    vm.open('list');
+                });
             },
             mounted: function() {
                 this.ckeditor.create = CKEDITOR.replace('ckeditor-create', ckeditorConfig);
@@ -812,11 +817,13 @@
                             break;
 
                         case 'create':
+                            history.pushState({}, '');
                             $('#listArea').fadeOut(0);
                             $('#createArea').fadeIn(300);
                             break;
 
                         case 'edit':
+                            history.pushState({}, '');
                             try {
                                 axios.get(vm.url + '/' + id).then(function(response) {
                                     vm.editData = response.data.item;
