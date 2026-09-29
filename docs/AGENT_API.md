@@ -35,24 +35,41 @@
 | 方法 | 路徑 | 說明 |
 |---|---|---|
 | GET | `/api/agent/me` | 這把金鑰的名稱與權限 |
-| GET | `/api/agent/schema` | **所有資源的欄位與驗證規則（機器可讀）**，agent 第一步先打這個 |
+| GET | `/api/agent/schema` | **所有資源的欄位與驗證規則（機器可讀）**，agent 第一步先打這個。每個資源另有 `list_params`（GET /all 可帶的篩選）與 `notes`（特殊規則，例：車框圖片） |
+| GET | `/api/agent/audit?page=1&resource=&record_id=` | 寫入紀錄（含改前快照 `before`），改壞了照快照退回 |
 | POST | `/api/agent/upload` | 上傳圖片／檔案，回傳可直接填進 `img` 欄位的網址（需 `files:write`） |
 
 ### 上傳
-`multipart/form-data`：`file`（必填）、`folder`（選填，預設 Agent）、`name`（選填，檔名前綴）
-允許資料夾：Banner, ListBanner, HomeSection, MultiMedia, Din, Dashcam, Camera, AudioAccessories, Headrest, Portable, Fitting, BlindSpot, CarFrame, Case, Dealer, Resource, Agent
-格式 jpg／jpeg／png／webp／gif／pdf，8MB 內。回傳：
-```json
-{ "message": "上傳成功", "url": "https://<後台網域>/storage/files/1/MultiMedia/gl700-20260912103000-a1b2.jpg", "path": "files/1/MultiMedia/gl700-….jpg", "size": 123456 }
+`POST /api/agent/upload`（multipart/form-data，需 `files:write`）
+
+| 欄位 | 說明 |
+|---|---|
+| `file` | 單一檔案；或用 `files[]` 一次最多 20 個 |
+| `folder` | 後台「檔案管理員」`files/1` 底下的相對路徑，**可以多層**，例：`Clarion 2026/GL-700_Ultra_13/Chinese/Transparent/3840x2159`。沒有的資料夾會自動建立；不填放 `Agent` |
+| `name` | 單檔時可指定檔名（不含副檔名）；多檔一律沿用原檔名 |
+
+檔名沿用原檔名（保留中文、底線），同名自動加 `-2`、`-3`。允許 jpg／jpeg／png／webp／gif／svg／pdf，單檔 20MB。
+上傳完後台「檔案管理員」同一個資料夾就看得到，網址格式與檔案管理員一致。
+
+```bash
+# 單檔
+curl -H "X-Agent-Key: mmk_xxx" -F "file=@DSP1.webp" \
+  -F "folder=Clarion 2026/GL-700_Ultra_13/Chinese/Transparent/3840x2159" \
+  https://<後台網域>/api/agent/upload
+# → {"message":"上傳成功","name":"DSP1.webp","url":"https://…/storage/files/1/Clarion 2026/GL-700_Ultra_13/…/DSP1.webp","path":"…","size":12345}
+
+# 多檔
+curl -H "X-Agent-Key: mmk_xxx" -F "files[]=@DSP1.webp" -F "files[]=@DSP5.webp" -F "files[]=@CARPLAY01.webp" \
+  -F "folder=Clarion 2026/GL-700_Ultra_13/Chinese/Transparent/3840x2159" \
+  https://<後台網域>/api/agent/upload
+# → {"items":[{name,url,path,size},…],"errors":[]}
 ```
-把 `url` 填進商品的 `img`（或 Banner 的 `img`／`img_mobile`）即可。
-圖片尺寸請照後台各欄位旁標示（首頁 Banner 1920×1080／1080×2160；列表頁 Banner 1920×480／1080×608；商品圖 1200×1200 白底；導入事例 1600×1000）。
 
 ## 四、標準 CRUD（大多數資源）
 以 `car_media` 為例，其他資源把名稱換掉即可：
 | 方法 | 路徑 | 說明 |
 |---|---|---|
-| GET | `/api/agent/car_media/all?page=1` | 列表（每頁 15 筆，回 `items.data`、`items.total`、`items.current_page`） |
+| GET | `/api/agent/car_media/all?page=1` | 列表（每頁 15 筆，回 `items.data`、`items.total`、`items.current_page`）。可帶篩選：`car_media` 用 `name=`；`car_frame` 用 `car_brand_id=`、`car_id=` |
 | POST | `/api/agent/car_media` | 新增（body 為 JSON，欄位見第五節） |
 | GET | `/api/agent/car_media/{id}` | 單筆（回 `item`） |
 | PATCH | `/api/agent/car_media/{id}` | 更新（**要送完整欄位**，跟後台表單一樣，不是只送改的那幾個） |
@@ -195,6 +212,18 @@
 
 ### `car_frame`　安卓車框
 權限群組：`products`　·　額外動作：img（刪單張圖，對應後台 deleteImg）
+
+**圖片不是單一 `img` 欄位**，而是 `imgArr[群組][序號]`，每群最多 3 張，值填 upload 回傳的網址：
+
+| 群組 | 用途 | 對應詳情頁 |
+|---|---|---|
+| `imgArr[0]` | 列表主圖（車框本體） | 列表卡片、詳情主圖 |
+| `imgArr[1]` | 車框配件 | 「車框配件」 |
+| `imgArr[2]` | 實際安裝（完工照） | 「實際安裝」 |
+| `imgArr[3]` | 車框概觀 | 「車框概觀」 |
+
+PATCH 時**沒送的位置會被視為刪除**，所以先 `GET /{id}` 拿回現有圖，改要改的，再整份送回。
+刪單張圖：`PATCH /api/agent/car_frame/{id}/img`，body `{"type":"img2","index":0}`（type：img=主圖、img1=配件、img2=實際安裝、img3=概觀）。
 
 | 欄位 | 中文 | 規則 |
 |---|---|---|
@@ -348,6 +377,8 @@ requests.patch(f"{BASE}/car_media/12", headers=H, json=item)
 ```
 
 ## 七、稽核與安全
+- `GET /api/agent/audit` 可以自己查：`?resource=car_media&record_id=12` 看某一筆被改過幾次、每次改前長什麼樣。有 `*` 權限的金鑰看得到所有金鑰的紀錄，其他金鑰只看得到自己的。
+- 所有回應一律 JSON（middleware 會強制 `Accept: application/json`），驗證失敗回 422 不會轉址。
 - 每一次 POST／PATCH／DELETE 都寫進 `agent_audit_logs`：哪把金鑰、幾點、哪個資源、id、送進來的資料、**改前快照**、回應碼、IP。改壞了可以查、可以照快照退回。
 - 金鑰只存 SHA-256；`revoked_at` 有值立即失效。
 - 建議給 agent 的金鑰只開它真的要用的群組；要改 Banner 再另開一把 `banners:write`。

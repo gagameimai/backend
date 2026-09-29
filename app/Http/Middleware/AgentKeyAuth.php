@@ -21,6 +21,9 @@ class AgentKeyAuth
 {
     public function handle(Request $request, Closure $next, ?string $scopeGroup = null)
     {
+        // 一律當 JSON 請求：沒帶 Accept 時，$request->validate() 失敗會變成 302 轉址（給瀏覽器用的行為），agent 看不懂
+        $request->headers->set('Accept', 'application/json');
+
         $plain = $request->header(config('agent_api.header', 'X-Agent-Key')) ?: $request->bearerToken();
         $key = AgentKeyModel::findByPlain($plain);
         if (!$key) {

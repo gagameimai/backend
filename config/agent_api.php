@@ -27,7 +27,9 @@ return [
 
     'resources' => [
         // ── 商品 ──
-        'car_media'             => ['scope' => 'products', 'controller' => 'App\Http\Controllers\Admin\Product\CarMediaController',            'model' => 'App\Models\CarMediaModel',            'request' => 'App\Http\Requests\Admin\Product\CarMediaResquest',            'actions' => ['top']],
+        'car_media'             => ['scope' => 'products', 'controller' => 'App\Http\Controllers\Admin\Product\CarMediaController',            'model' => 'App\Models\CarMediaModel',            'request' => 'App\Http\Requests\Admin\Product\CarMediaResquest',            'actions' => ['top'],
+            'list_params' => ['name'],
+            'notes' => 'type：0=MM 多媒體安卓機（ME 系列）、1=MM 車型專用機、2=Clarion GL 系列、3=Clarion 車型專用機。memo=列表簡述、memo_in=詳情頁摘要（SEO description 用）、content=內文 HTML。'],
         'car_head_unit'         => ['scope' => 'products', 'controller' => 'App\Http\Controllers\Admin\Product\CarHeadUnitController',         'model' => 'App\Models\CarHeadUnitModel',         'request' => 'App\Http\Requests\Admin\Product\CarHeadUnitResquest',         'actions' => ['top']],
         'car_dashcam'           => ['scope' => 'products', 'controller' => 'App\Http\Controllers\Admin\Product\CarDashcamController',          'model' => 'App\Models\CarDashcamModel',          'request' => 'App\Http\Requests\Admin\Product\CarDashcamResquest',          'actions' => ['top']],
         'car_camera'            => ['scope' => 'products', 'controller' => 'App\Http\Controllers\Admin\Product\CarCameraController',           'model' => 'App\Models\CarCameraModel',           'request' => 'App\Http\Requests\Admin\Product\CarCameraResquest',           'actions' => ['top']],
@@ -37,14 +39,18 @@ return [
         'car_fitting'           => ['scope' => 'products', 'controller' => 'App\Http\Controllers\Admin\Product\CarFittingController',          'model' => 'App\Models\CarFittingModel',          'request' => 'App\Http\Requests\Admin\Product\CarFittingResquest',          'actions' => ['top']],
         'car_blind_spot'        => ['scope' => 'products', 'controller' => 'App\Http\Controllers\Admin\Product\CarBlindSpotController',        'model' => 'App\Models\CarBlindSpotModel',        'request' => 'App\Http\Requests\Admin\Product\CarBlindSpotResquest',        'actions' => ['top', 'spc']],
         'car_blind_spot_format' => ['scope' => 'products', 'controller' => 'App\Http\Controllers\Admin\Product\CarBlindSpotFormatController',  'model' => 'App\Models\CarBlindSpotFormatModel',  'request' => 'App\Http\Requests\Admin\Product\CarBlindSpotFormatResquest',  'actions' => [], 'prefix' => 'car_blind_spot_format/{car_blind_spot}'],
-        'car_frame'             => ['scope' => 'products', 'controller' => 'App\Http\Controllers\Admin\Product\CarFrameController',            'model' => 'App\Models\CarFrameModel',            'request' => 'App\Http\Requests\Admin\Product\CarFrameResquest',            'actions' => ['img' => 'deleteImg']],
+        'car_frame'             => ['scope' => 'products', 'controller' => 'App\Http\Controllers\Admin\Product\CarFrameController',            'model' => 'App\Models\CarFrameModel',            'request' => 'App\Http\Requests\Admin\Product\CarFrameResquest',            'actions' => ['img' => 'deleteImg'],
+            'list_params' => ['car_brand_id', 'car_id'],
+            'notes' => '圖片不是單一 img 欄位，而是 imgArr[群組][序號]（每群最多 3 張，值為 upload 回傳的網址）：imgArr[0]=列表主圖（車框圖）、imgArr[1]=車框配件、imgArr[2]=實際安裝（完工照）、imgArr[3]=車框概觀。PATCH 時沒送的位置視為刪除，請先 GET /{id} 拿回現有圖再整份送回。刪單張圖：PATCH /{id}/img，body {"type":"img|img1|img2|img3","index":0}（img=主圖、img1=配件、img2=實際安裝、img3=概觀）。'],
         'car_brand'             => ['scope' => 'products', 'controller' => 'App\Http\Controllers\Admin\Product\CarBrandController',            'model' => 'App\Models\CarBrandModel',            'request' => 'App\Http\Requests\Admin\Product\CarBrandResquest',            'actions' => []],
         'car'                   => ['scope' => 'products', 'controller' => 'App\Http\Controllers\Admin\Product\CarController',                 'model' => 'App\Models\CarModel',                 'request' => 'App\Http\Requests\Admin\Product\CarResquest',                 'actions' => []],
         'recommend_product'     => ['scope' => 'products', 'controller' => 'App\Http\Controllers\Admin\RecommendProductController',            'model' => 'App\Models\RecommendProductModel',    'request' => 'App\Http\Requests\Admin\RecommendProductResquest',            'actions' => [], 'extra_get' => ['options']],
         // ── Banner ──
         'banner'                => ['scope' => 'banners',  'controller' => 'App\Http\Controllers\Admin\BannerController',                      'model' => 'App\Models\BannerModel',              'request' => 'App\Http\Requests\Admin\BannerResquest',                      'actions' => []],
-        'list_banner'           => ['scope' => 'banners',  'controller' => 'App\Http\Controllers\Admin\ListBannerController',                  'model' => 'App\Models\ListBannerModel',          'request' => 'App\Http\Requests\Admin\ListBannerResquest',                  'style' => 'kv', 'key' => '{page_key}/{type_key}'],
-        'home_section'          => ['scope' => 'banners',  'controller' => 'App\Http\Controllers\Admin\HomeSectionController',                 'model' => 'App\Models\HomeSectionModel',         'request' => 'App\Http\Requests\Admin\HomeSectionResquest',                 'style' => 'kv', 'key' => '{section_key}'],
+        'list_banner'           => ['scope' => 'banners',  'controller' => 'App\Http\Controllers\Admin\ListBannerController',                  'model' => 'App\Models\ListBannerModel',          'request' => 'App\Http\Requests\Admin\ListBannerResquest',                  'style' => 'kv', 'key' => '{page_key}/{type_key}',
+            'notes' => 'page_key／type_key 以 GET /all 回傳的清單為準（沒有 types 的頁面 type_key 用 default）。img=電腦版 1920×480、img_mobile=手機版 1080×608，值為 upload 回傳的網址。'],
+        'home_section'          => ['scope' => 'banners',  'controller' => 'App\Http\Controllers\Admin\HomeSectionController',                 'model' => 'App\Models\HomeSectionModel',         'request' => 'App\Http\Requests\Admin\HomeSectionResquest',                 'style' => 'kv', 'key' => '{section_key}',
+            'notes' => 'section_key：zone1／zone2／zone3（首頁三個滿版區塊，順序見 GET /all）。'],
         // ── 導入事例 ──
         'install_case'          => ['scope' => 'cases',    'controller' => 'App\Http\Controllers\Admin\InstallCaseController',                 'model' => 'App\Models\InstallCaseModel',         'request' => 'App\Http\Requests\Admin\InstallCaseResquest',                 'actions' => ['pinned', 'home']],
         // ── 經銷據點 ──
@@ -53,20 +59,26 @@ return [
         'resource_category'     => ['scope' => 'resources','controller' => 'App\Http\Controllers\Admin\Resource\ResourceCategoryController',   'model' => 'App\Models\ResourceCategoryModel',    'request' => 'App\Http\Requests\Admin\Resource\ResourceCategoryResquest',   'actions' => []],
         'resource'              => ['scope' => 'resources','controller' => 'App\Http\Controllers\Admin\Resource\ResourceController',           'model' => 'App\Models\ResourceModel',            'request' => 'App\Http\Requests\Admin\Resource\ResourceResquest',           'actions' => []],
         // ── 設定 ──
-        'website'               => ['scope' => 'settings', 'controller' => 'App\Http\Controllers\Admin\Setting\WebsiteInfoController',         'model' => null, 'request' => null, 'style' => 'single'],
+        'website'               => ['scope' => 'settings', 'controller' => 'App\Http\Controllers\Admin\Setting\WebsiteInfoController',         'model' => null, 'request' => null, 'style' => 'single',
+            'notes' => '整份 content 物件送回（先 GET /all 拿到 item.content，改欄位後 PATCH {"content": {...}}）。公司名稱、地址、電話要跟前台 composables/useSiteInfo.js 逐字一致。'],
         'qa'                    => ['scope' => 'settings', 'controller' => 'App\Http\Controllers\Admin\Setting\QaController',                  'model' => null, 'request' => null, 'style' => 'single'],
         'about'                 => ['scope' => 'settings', 'controller' => 'App\Http\Controllers\Admin\Setting\AboutController',               'model' => null, 'request' => null, 'style' => 'single'],
     ],
 
-    // 圖片上傳：只允許放到這些資料夾（對應後台檔案管理員 files/1/<資料夾>），網址格式與檔案管理員一致
+    // 圖片上傳：放到後台檔案管理員的同一棵目錄樹 files/1/<folder>，folder 可以多層（例：Clarion 2026/GL-700_Ultra_13/Chinese/Transparent/3840x2159），
+    // 沒有的資料夾會自動建立；網址格式與檔案管理員一致，後台檔案管理員也看得到。
     'upload' => [
         'disk' => 'public',
         'base' => 'files/1',
-        'folders' => ['Banner', 'ListBanner', 'HomeSection', 'MultiMedia', 'Din', 'Dashcam', 'Camera', 'AudioAccessories', 'Headrest', 'Portable', 'Fitting', 'BlindSpot', 'CarFrame', 'Case', 'Dealer', 'Resource', 'Agent'],
-        'max_kb' => 8192,
-        'mimes' => 'jpg,jpeg,png,webp,gif,pdf',
+        'default_folder' => 'Agent',
+        'max_kb' => 20480,
+        'max_files' => 20,                       // 一次最多幾個檔（files[]）
+        'mimes' => 'jpg,jpeg,png,webp,gif,svg,pdf',
     ],
 
     // 每分鐘請求上限（每把金鑰）
     'rate_limit_per_minute' => 120,
+
+    // GET /api/agent/audit 一頁幾筆
+    'audit_per_page' => 50,
 ];

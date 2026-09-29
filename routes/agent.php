@@ -20,6 +20,7 @@ Route::prefix('agent')->group(function () {
     $agent = '\\App\\Http\\Controllers\\Agent\\AgentController';
     Route::get('me', "{$agent}@me")->middleware('agent.key');
     Route::get('schema', "{$agent}@schema")->middleware('agent.key');
+    Route::get('audit', "{$agent}@audit")->middleware('agent.key');
     Route::post('upload', "{$agent}@upload")->middleware('agent.key:files');
 
     foreach (config('agent_api.resources') as $name => $cfg) {
