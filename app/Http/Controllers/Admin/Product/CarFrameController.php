@@ -27,6 +27,14 @@ class CarFrameController extends Controller
         '3' => 'images/watermark3.png',
     ];
 
+    // 取得浮水印檔案路徑：優先使用後台「浮水印設定」上傳的自訂檔，沒有則用 public/images 預設檔
+    protected function watermarkFile($i)
+    {
+        $custom = storage_path('app/public/watermark-config/' . basename($this->watermarkImg[$i]));
+
+        return File::exists($custom) ? $custom : public_path($this->watermarkImg[$i]);
+    }
+
     // 浮水印位置
     public $watermarkPath = [
         1 => 'top-left',
@@ -135,18 +143,18 @@ class CarFrameController extends Controller
                     $imgTmp = $request->input("imgArr.{$i}.{$j}", '');
                     if (!empty($imgTmp) && Storage::exists(str_replace(env('APP_URL') . '/storage', 'public', $imgTmp))) {
                         $path = $request->input("watermarkArr.{$i}.{$j}", 0);
-                        if ($path != 0 && File::exists(public_path($this->watermarkImg[$i]))) {
+                        if ($path != 0 && File::exists($this->watermarkFile($i))) {
                             $fileName = date('Ymdhis') . rand(0, 9) . rand(0, 9) . '.' . pathinfo($imgTmp, PATHINFO_EXTENSION);
                             $imgTmp = $this->link_urldecode($imgTmp);
 
                             if ($path == -1) {
                                 $image = Image::make($imgTmp);
-                                $watermark = Image::make(public_path($this->watermarkImg[$i]));
+                                $watermark = Image::make($this->watermarkFile($i));
                                 $watermark->resize($image->width(), $image->height());
                                 $image->insert($watermark)->save(storage_path($this->watermarkSave . $fileName));
                             } else {
                                 Image::make($imgTmp)->insert(
-                                    public_path($this->watermarkImg[$i]),
+                                    $this->watermarkFile($i),
                                     $this->watermarkPath[$path],
                                     10, 10
                                 )->save(storage_path($this->watermarkSave . $fileName));
@@ -215,18 +223,18 @@ class CarFrameController extends Controller
                         $imgTmp = $request->input("imgArr.{$i}.{$j}", '');
                         if (!empty($imgTmp) && Storage::exists(str_replace(env('APP_URL') . '/storage', 'public', $imgTmp))) {
                             $path = $request->input("watermarkArr.{$i}.{$j}", 0);
-                            if ($path != 0 && File::exists(public_path($this->watermarkImg[$i]))) {
+                            if ($path != 0 && File::exists($this->watermarkFile($i))) {
                                 $fileName = date('Ymdhis') . rand(0, 9) . rand(0, 9) . '.' . pathinfo($imgTmp, PATHINFO_EXTENSION);
                                 $imgTmp = $this->link_urldecode($imgTmp);
 
                                 if ($path == -1) {
                                     $image = Image::make($imgTmp);
-                                    $watermark = Image::make(public_path($this->watermarkImg[$i]));
+                                    $watermark = Image::make($this->watermarkFile($i));
                                     $watermark->resize($image->width(), $image->height());
                                     $image->insert($watermark)->save(storage_path($this->watermarkSave . $fileName));
                                 } else {
                                     Image::make($imgTmp)->insert(
-                                        public_path($this->watermarkImg[$i]),
+                                        $this->watermarkFile($i),
                                         $this->watermarkPath[$path],
                                         10, 10
                                     )->save(storage_path($this->watermarkSave . $fileName));

@@ -51,6 +51,14 @@ Route::group([
                 Route::get('all', 'AboutController@all');
                 Route::patch('/', 'AboutController@update');
             });
+
+            // 浮水印設定（安卓車框圖片用）
+            Route::prefix('watermark')->group(function () {
+                Route::get('/', 'WatermarkController@index')->name('admin.watermark');
+                Route::get('all', 'WatermarkController@all');
+                Route::post('{key}', 'WatermarkController@upload')->where('key', '[0-3]');
+                Route::delete('{key}', 'WatermarkController@restore')->where('key', '[0-3]');
+            });
         });
 
         // banner

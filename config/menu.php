@@ -25,6 +25,10 @@ return [
                     'name' => '網站基本設定',
                     'route' => 'website',
                 ],
+                'watermark' => [
+                    'name' => '浮水印設定',
+                    'route' => 'watermark',
+                ],
             ]
         ],
 
