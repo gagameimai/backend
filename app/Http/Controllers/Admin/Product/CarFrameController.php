@@ -44,6 +44,36 @@ class CarFrameController extends Controller
         5 => 'center',
     ];
 
+    /**
+     * 把圖片網址整理成「本站 storage 裡真的存在的檔案」。
+     * 原本只接受「以 APP_URL/storage 開頭、且沒有 %20／%E4 這類編碼」的網址，其他一律當成沒有圖、存成空字串，
+     * 所以 Hermes 送 www 網域、http/https 不同、或帶 URL 編碼的網址時，整張圖就被清空。
+     * 這裡改成：不管網域、不管有沒有編碼，只要 /storage/ 後面的路徑對得到檔案就算數。
+     *
+     * @return array|null [標準網址, storage 磁碟路徑]；找不到檔案回 null
+     */
+    protected function resolveImg($url)
+    {
+        $url = trim((string) $url);
+        if ($url === '') {
+            return null;
+        }
+        $path = rawurldecode((string) (parse_url($url, PHP_URL_PATH) ?: $url));
+        $pos = strpos($path, '/storage/');
+        if ($pos === false) {
+            return null;
+        }
+        $rel = ltrim(substr($path, $pos + 9), '/');
+        if ($rel === '' || strpos($rel, '..') !== false) {
+            return null;
+        }
+        if (!Storage::exists('public/' . $rel)) {
+            return null;
+        }
+
+        return [rtrim((string) config('app.url'), '/') . '/storage/' . $rel, 'public/' . $rel];
+    }
+
     // 圖片中文連結處理
     public function link_urldecode($url)
     {
@@ -141,7 +171,9 @@ class CarFrameController extends Controller
             for ($j=0; $j < 3; $j++) {
                 try {
                     $imgTmp = $request->input("imgArr.{$i}.{$j}", '');
-                    if (!empty($imgTmp) && Storage::exists(str_replace(env('APP_URL') . '/storage', 'public', $imgTmp))) {
+                    $resolved = $this->resolveImg($imgTmp);
+                    if ($resolved) {
+                        $imgTmp = $resolved[0];
                         $path = $request->input("watermarkArr.{$i}.{$j}", 0);
                         if ($path != 0 && File::exists($this->watermarkFile($i))) {
                             $fileName = date('Ymdhis') . rand(0, 9) . rand(0, 9) . '.' . pathinfo($imgTmp, PATHINFO_EXTENSION);
@@ -221,7 +253,24 @@ class CarFrameController extends Controller
                 for ($j=0; $j < 3; $j++) {
                     try {
                         $imgTmp = $request->input("imgArr.{$i}.{$j}", '');
-                        if (!empty($imgTmp) && Storage::exists(str_replace(env('APP_URL') . '/storage', 'public', $imgTmp))) {
+                        $old = $imgArr[$i][$j] ?? '';
+                        // 這一格整個沒送：保留原本的圖（以前會被清成空字串，Hermes 只改一張圖時其他圖全消失）。
+                        // 後台畫面會把每一格都送上來，刪圖是送空字串，不受影響。
+                        if (!$request->has("imgArr.{$i}.{$j}")) {
+                            continue;
+                        }
+                        $resolved = $this->resolveImg($imgTmp);
+                        if (!$resolved && !empty($imgTmp)) {
+                            // 送了網址但對不到檔案：如果就是原本那張（檔案後來被刪）照舊保留；否則明確報錯，不要默默清空
+                            if ($old !== '' && rawurldecode($imgTmp) === rawurldecode($old)) {
+                                continue;
+                            }
+                            return response()->json([
+                                'message' => "imgArr.{$i}.{$j} 的網址找不到檔案：{$imgTmp}（請直接使用 upload 回傳的 url，必須含 /storage/files/1/…）"
+                            ], 422);
+                        }
+                        if ($resolved) {
+                            $imgTmp = $resolved[0];
                             $path = $request->input("watermarkArr.{$i}.{$j}", 0);
                             if ($path != 0 && File::exists($this->watermarkFile($i))) {
                                 $fileName = date('Ymdhis') . rand(0, 9) . rand(0, 9) . '.' . pathinfo($imgTmp, PATHINFO_EXTENSION);
@@ -287,6 +336,10 @@ class CarFrameController extends Controller
                 'message' => '查無資料'
             ], 400);
         } else {
+            // 刪除前檢查關聯（App\Support\RelationGuard），有人在用就擋下來
+            if ($msg = \App\Support\RelationGuard::product('car_frame', $id)) {
+                return response()->json(['message' => $msg], 400);
+            }
             $item->delete();
 
             return response()->json([
@@ -415,12 +468,12 @@ class CarFrameController extends Controller
                     throw new \Exception('查無圖片');
                 }
 
-                $img = str_replace(env('APP_URL') . '/storage', 'public', $imgArr[$index]);
-                if (!Storage::exists($img)) {
+                // 2026-09-30 改：只清掉這一格的網址，不再實體刪檔。
+                // 原本會 Storage::delete，但同一張圖可能被其他車框／Banner／內文共用，刪了會變壞圖；
+                // 檔案要清理請到後台檔案管理員手動處理。
+                if ($imgArr[$index] === '' || $imgArr[$index] === null) {
                     throw new \Exception('查無圖片');
                 }
-
-                Storage::delete($img);
 
                 $imgArr[$index] = '';
                 $item->$type = json_encode($imgArr);

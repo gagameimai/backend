@@ -57,17 +57,17 @@ class SearchController extends Controller
                     'car_frame' => $result,
                     'car_media' => CarMediaModel::selectRaw('id, name, img')
                         ->where('status', 1)
-                        ->orderBy('is_top', 'ASC')
+                        ->orderByDesc('is_top')   /* 2026-09-30：置頂在前（原本 ASC 是反的） */
                         ->orderBy('name', 'ASC')
                         ->get(),
                     'car_blind_spot' => CarBlindSpotModel::selectRaw('id, name, img')
                         ->where('status', 1)
-                        ->orderBy('is_top', 'ASC')
+                        ->orderByDesc('is_top')   /* 2026-09-30：置頂在前（原本 ASC 是反的） */
                         ->orderBy('name', 'ASC')
                         ->get(),
                     'car_fitting' => CarFittingModel::selectRaw('id, name, img')
                         ->where('status', 1)
-                        ->orderBy('is_top', 'ASC')
+                        ->orderByDesc('is_top')   /* 2026-09-30：置頂在前（原本 ASC 是反的） */
                         ->orderBy('sort', 'ASC')
                         ->get(),
                 ]

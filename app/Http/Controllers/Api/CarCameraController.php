@@ -25,7 +25,7 @@ class CarCameraController extends Controller
             }
 
             return response()->json([
-                'result' => $query->orderBy('is_top', 'ASC')
+                'result' => $query->orderByDesc('is_top')   /* 2026-09-30：置頂在前（原本 ASC 是反的） */
                     ->orderBy('sort', 'ASC')
                     ->get()
             ]);
@@ -54,7 +54,7 @@ class CarCameraController extends Controller
                 $query->where('brand', $request->input('brand'));
             }
 
-            $result = $query->find($id);
+            $result = $query->where('status', 1)->find($id)   /* 2026-09-30：停用的商品詳情頁不再打得開 */;
             if (empty($result)) {
                 return response()->json([
                     'message' => '查無資料'

@@ -78,7 +78,7 @@ class CarFrameController extends Controller
         try {
             $result = CarFrameModel::with(['brand', 'car'])
                 ->selectRaw('car_brand_id, car_id, name, img, img1, img2, img3, content, year_start, year_end, size')
-                ->find($id);
+                ->where('status', 1)->find($id)   /* 2026-09-30：停用的商品詳情頁不再打得開 */;
             if (empty($result)) {
                 return response()->json([
                     'message' => '查無資料'

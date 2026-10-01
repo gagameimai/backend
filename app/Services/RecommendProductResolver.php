@@ -62,8 +62,9 @@ class RecommendProductResolver
      * @param  \Illuminate\Support\Collection|array  $rows  RecommendProductModel 清單
      * @return array
      */
-    public static function resolveMany($rows): array
+    public static function resolveMany($rows, bool $onlyActive = false): array
     {
+        // $onlyActive=true（前台用）：商品本身 status=0（停用）就不顯示；後台列表仍要看得到停用商品的名稱，所以預設 false
         $types = config('recommend_product.types', []);
 
         // 依 product_type 分組，收集要查的 id
@@ -82,6 +83,9 @@ class RecommendProductResolver
 
             $modelClass = $conf['model'];
             $query = $modelClass::whereIn('id', array_unique($ids));
+            if ($onlyActive) {
+                $query->where('status', 1);   // 2026-09-30：停用的商品不再出現在首頁精選
+            }
 
             // car_frame 需要帶出 brand/car 關聯，組合完整名稱
             if ($type === 'car_frame') {

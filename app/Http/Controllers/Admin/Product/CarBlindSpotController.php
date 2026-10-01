@@ -108,6 +108,12 @@ class CarBlindSpotController extends Controller
                 'message' => '查無資料'
             ], 400);
         } else {
+            // 刪除前檢查關聯（App\Support\RelationGuard），有人在用就擋下來
+            if ($msg = \App\Support\RelationGuard::product('car_blind_spot', $id)) {
+                return response()->json(['message' => $msg], 400);
+            }
+            // 適用車款是這個商品的子資料，跟著一起刪（原本會留下孤兒資料）
+            DB::table('car_blind_spot_format')->where('car_blind_spot_id', $id)->delete();
             $item->delete();
 
             return response()->json([
@@ -151,7 +157,7 @@ class CarBlindSpotController extends Controller
                 'message' => '排序更新失敗。'
             ], 400);
         } else {
-            DB::update(update_when_case_string('car_frame', 'sort', $request->items));
+            DB::update(update_when_case_string('car_blind_spot', 'sort', $request->items));
 
             return response([
                 'message' => '排序更新成功。'

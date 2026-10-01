@@ -110,6 +110,10 @@ class CarFittingController extends Controller
                 'message' => '查無資料'
             ], 400);
         } else {
+            // 刪除前檢查關聯（App\Support\RelationGuard），有人在用就擋下來
+            if ($msg = \App\Support\RelationGuard::product('car_fitting', $id)) {
+                return response()->json(['message' => $msg], 400);
+            }
             $item->delete();
 
             return response()->json([
@@ -151,7 +155,7 @@ class CarFittingController extends Controller
                 'message' => '排序更新失敗。'
             ], 400);
         } else {
-            DB::update(update_when_case_string('car_frame', 'sort', $request->items));
+            DB::update(update_when_case_string('car_fitting', 'sort', $request->items));
 
             return response([
                 'message' => '排序更新成功。'

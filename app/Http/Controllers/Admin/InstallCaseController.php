@@ -47,6 +47,19 @@ class InstallCaseController extends Controller
         ]);
     }
 
+    // 首頁最多 3 筆：原本只有 /home 切換端點會檢查，直接 POST／PATCH 帶 is_home=1 可以繞過
+    protected function homeFull($request, $exceptId = null)
+    {
+        if ((int) $request->input('is_home') !== 1) {
+            return false;
+        }
+        $q = InstallCaseModel::where('is_home', 1);
+        if ($exceptId) {
+            $q->where('id', '<>', $exceptId);
+        }
+        return $q->count() >= 3;
+    }
+
     /**
      * 新增
      *
@@ -55,6 +68,10 @@ class InstallCaseController extends Controller
      */
     public function create(InstallCaseResquest $request)
     {
+        if ($this->homeFull($request)) {
+            return response()->json(['message' => '首頁最多只能放 3 筆，請先把其中一筆關閉'], 400);
+        }
+
         InstallCaseModel::create([
             'category' => $request->input('category'),
             'name' => $request->input('name'),
@@ -87,6 +104,10 @@ class InstallCaseController extends Controller
      */
     public function update(InstallCaseResquest $request, $id)
     {
+        if ($this->homeFull($request, $id)) {
+            return response()->json(['message' => '首頁最多只能放 3 筆，請先把其中一筆關閉'], 400);
+        }
+
         $item = InstallCaseModel::find($id);
         if (empty($item)) {
             return response([

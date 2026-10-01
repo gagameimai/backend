@@ -22,6 +22,7 @@ Route::prefix('agent')->group(function () {
     Route::get('schema', "{$agent}@schema")->middleware('agent.key');
     Route::get('audit', "{$agent}@audit")->middleware('agent.key');
     Route::post('upload', "{$agent}@upload")->middleware('agent.key:files');
+    Route::post('publish', "{$agent}@publish")->middleware('agent.key:publish');
 
     foreach (config('agent_api.resources') as $name => $cfg) {
         $c = '\\' . ltrim($cfg['controller'], '\\');
@@ -33,6 +34,13 @@ Route::prefix('agent')->group(function () {
             if ($style === 'single') {           // website / qa / about：只有讀全部＋更新
                 Route::get('all', "{$c}@all");
                 Route::patch('/', "{$c}@update");
+                return;
+            }
+
+            if ($style === 'watermark') {        // 浮水印：4 組固定槽位，換圖／還原
+                Route::get('all', "{$c}@all");
+                Route::post('{key}', "{$c}@upload")->where('key', '[0-3]');
+                Route::delete('{key}', "{$c}@restore")->where('key', '[0-3]');
                 return;
             }
 

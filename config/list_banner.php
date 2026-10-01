@@ -34,11 +34,11 @@ return [
             'types' => null,
         ],
         'fitting' => [
-            'name' => '影像・安全',
+            'name' => '車用配件',
             'types' => null,
         ],
         'safety' => [
-            'name' => '盲點偵測',
+            'name' => '影像・安全',
             'types' => null,
         ],
         'headUnit' => [

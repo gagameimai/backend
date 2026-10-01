@@ -60,7 +60,32 @@ class AgentKeyAuth
             }
         }
 
+        // 寫入前：圖片欄位統一、PATCH 沒送的欄位沿用現有值（所有資源共用，見 App\Support\AgentWriteHelper）
+        if ($isWrite && $resource && $request->method() !== 'DELETE') {
+            $segments = $request->segments();
+            $i = array_search('agent', $segments, true);
+            $prefix = config("agent_api.resources.{$resource}.prefix");
+            $offset = ($prefix && strpos($prefix, '{') !== false) ? 3 : 2;
+            $isMainUpdate = $request->method() === 'PATCH' && $recordId !== null && !isset($segments[$i + $offset + 1]);
+            $action = $isMainUpdate ? null : ($segments[$i + $offset + 1] ?? null);
+            $maxBefore = $request->method() === 'POST' ? \App\Support\AgentWriteHelper::maxId($resource) : null;
+            $blocked = \App\Support\AgentWriteHelper::prepare($request, $resource, $recordId, $isMainUpdate, $action);
+            if ($blocked) {
+                AgentAuditLogModel::create([
+                    'agent_key_id' => $key->id, 'method' => $request->method(),
+                    'path' => '/' . ltrim($request->path(), '/'), 'resource' => $resource, 'record_id' => $recordId,
+                    'payload' => $request->except(['file', 'files']), 'before' => $before,
+                    'response_status' => $blocked->getStatusCode(), 'ip' => $request->ip(),
+                ]);
+                return $blocked;
+            }
+        }
+
         $response = $next($request);
+
+        if ($isWrite && $resource && $request->method() !== 'DELETE') {
+            $response = \App\Support\AgentWriteHelper::finish($response, $request, $resource, $recordId, $maxBefore ?? null);
+        }
 
         $key->forceFill(['last_used_at' => now()])->saveQuietly();
 

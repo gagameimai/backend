@@ -19,7 +19,7 @@ class FittingController extends Controller
             return response()->json([
                 'result' => CarFittingModel::selectRaw('id, name, material, power, img')
                     ->where('status', 1)
-                    ->orderBy('is_top', 'ASC')
+                    ->orderByDesc('is_top')   /* 2026-09-30：置頂在前（原本 ASC 是反的） */
                     ->orderBy('sort', 'ASC')
                     ->get()
             ]);
@@ -41,7 +41,7 @@ class FittingController extends Controller
     public function detail($id)
     {
         try {
-            $result = CarFittingModel::selectRaw('name, img, memo_in, content')->find($id);
+            $result = CarFittingModel::selectRaw('name, img, memo_in, content')->where('status', 1)->find($id)   /* 2026-09-30：停用的商品詳情頁不再打得開 */;
             if (empty($result)) {
                 return response()->json([
                     'message' => '查無資料'

@@ -23,7 +23,7 @@ class RecommendProductController extends Controller
                 ->get();
 
             return response()->json([
-                'result' => RecommendProductResolver::resolveMany($rows)
+                'result' => RecommendProductResolver::resolveMany($rows, true)
             ]);
         } catch (\Throwable $th) {
             $this->apiLog('RecommendProductController->get()異常', $th);

@@ -53,6 +53,8 @@ class AgentController extends Controller
                 'fields' => $rules,
                 'field_labels' => $labels,
                 'notes' => $cfg['notes'] ?? null,             // 這個資源的特殊規則（例：車框圖片是 imgArr）
+                'docs' => config("agent_field_docs.resources.{$name}"),   // 白話說明：後台叫什麼、前台哪裡用、關聯、每個欄位做什麼
+                'image_fields' => config("agent_api.images.{$name}"),      // 這個資源的圖片欄位（'frame'＝imgArr）
             ];
         }
         return response()->json([
@@ -66,6 +68,8 @@ class AgentController extends Controller
                 'mimes' => config('agent_api.upload.mimes'),
                 'response' => '單檔回 {url,path,size}；多檔回 {items:[{name,url,path,size}], errors:[...]}',
             ],
+            'image_input' => config('agent_field_docs.image_input'),
+            'common_fields' => config('agent_field_docs.common'),
             'resources' => $out,
             'audit' => 'GET /api/agent/audit?page=1&resource=car_media&record_id=12  每一次寫入的紀錄（含改前快照），改壞了可照 before 退回',
         ]);
@@ -98,6 +102,9 @@ class AgentController extends Controller
         if ($style === 'kv') {
             return ["GET {$b}/all", "PATCH {$b}/" . $cfg['key']];
         }
+        if ($style === 'watermark') {
+            return ["GET {$b}/all", "POST {$b}/{key}  (multipart: file=PNG)", "DELETE {$b}/{key}  (還原預設)"];
+        }
         $e = ["GET {$b}/all?page=1", "POST {$b}", "GET {$b}/{id}", "PATCH {$b}/{id}", "DELETE {$b}/{id}", "PATCH {$b}/{id}/status", "PATCH {$b}/all/sort  (body: items=[{id,sort},...])"];
         foreach (($cfg['actions'] ?? []) as $k => $v) {
             $seg = is_int($k) ? $v : $k;
@@ -105,6 +112,40 @@ class AgentController extends Controller
         }
         foreach (($cfg['extra_get'] ?? []) as $g) $e[] = "GET {$b}/{$g}";
         return $e;
+    }
+
+    /**
+     * 通知「重新產生前台」：前台是靜態網站，後台資料改完要重新 generate 才看得到。
+     * 需要工程師設定 .env 的 AGENT_DEPLOY_HOOK_URL（例如 CI／主機上的 webhook 網址）；沒設定就如實回報，不假裝成功。
+     * 每分鐘最多觸發一次，避免連續寫入時重複建置。
+     */
+    public function publish(Request $request)
+    {
+        $hook = config('agent_api.deploy_hook');
+        if (!$hook) {
+            return response()->json([
+                'message' => '尚未設定「重新產生前台」的觸發網址（.env 的 AGENT_DEPLOY_HOOK_URL），請工程師設定後才能使用。後台資料已寫入，但前台要人工重新產生。',
+                'configured' => false,
+            ], 501);
+        }
+        $lock = 'agent_publish_lock';
+        if (\Illuminate\Support\Facades\Cache::has($lock)) {
+            return response()->json(['message' => '一分鐘內已經觸發過，請稍後再試（避免重複建置）', 'triggered' => false], 429);
+        }
+        try {
+            $res = \Illuminate\Support\Facades\Http::timeout(15)->post($hook, [
+                'source' => 'agent',
+                'key' => optional($request->attributes->get('agent_key'))->name,
+                'time' => now()->toDateTimeString(),
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['message' => '觸發失敗：' . $e->getMessage(), 'triggered' => false], 502);
+        }
+        if (!$res->successful()) {
+            return response()->json(['message' => '觸發網址回應 HTTP ' . $res->status(), 'triggered' => false], 502);
+        }
+        \Illuminate\Support\Facades\Cache::put($lock, 1, 60);
+        return response()->json(['message' => '已通知重新產生前台（通常數分鐘後生效）', 'triggered' => true]);
     }
 
     public function upload(Request $request)

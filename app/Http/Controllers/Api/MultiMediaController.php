@@ -47,7 +47,7 @@ class MultiMediaController extends Controller
     public function detail($id)
     {
         try {
-            $result = CarMediaModel::selectRaw('name, img, memo_in, content, size, hard_drive, ram, resolution, price, type')->find($id);
+            $result = CarMediaModel::selectRaw('name, img, memo_in, content, size, hard_drive, ram, resolution, price, type')->where('status', 1)->find($id)   /* 2026-09-30：停用的商品詳情頁不再打得開 */;
             if (empty($result)) {
                 return response()->json([
                     'message' => '查無資料'

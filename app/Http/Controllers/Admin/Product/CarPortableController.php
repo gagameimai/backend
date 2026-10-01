@@ -108,6 +108,10 @@ class CarPortableController extends Controller
                 'message' => '查無資料'
             ], 400);
         } else {
+            // 刪除前檢查關聯（App\Support\RelationGuard），有人在用就擋下來
+            if ($msg = \App\Support\RelationGuard::product('car_portable', $id)) {
+                return response()->json(['message' => $msg], 400);
+            }
             $item->delete();
 
             return response()->json([
