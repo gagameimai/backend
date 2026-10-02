@@ -33,7 +33,7 @@ class ListBannerController extends Controller
             $typeKey = $request->input('type');
             $typeKey = $typeKey === null || $typeKey === '' ? 'default' : (string) $typeKey;
 
-            $item = ListBannerModel::selectRaw('img, img_mobile')
+            $item = ListBannerModel::selectRaw('img, img_mobile, kicker, title, description, kicker_color, title_color, desc_color')
                 ->where('page_key', $pageKey)
                 ->where('type_key', $typeKey)
                 ->first();
@@ -42,6 +42,12 @@ class ListBannerController extends Controller
                 'result' => [
                     'img' => $item->img ?? null,
                     'img_mobile' => $item->img_mobile ?? null,
+                    'kicker' => $item->kicker ?? null,
+                    'title' => $item->title ?? null,
+                    'description' => $item->description ?? null,
+                    'kicker_color' => $item->kicker_color ?? null,
+                    'title_color' => $item->title_color ?? null,
+                    'desc_color' => $item->desc_color ?? null,
                 ]
             ]);
         } catch (\Throwable $th) {

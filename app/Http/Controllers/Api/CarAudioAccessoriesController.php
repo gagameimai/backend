@@ -10,7 +10,7 @@ class CarAudioAccessoriesController extends Controller
 {
     /**
      * 汽車音響 - 列表（沒帶 id，給 audioAccessories 用）
-     * 回傳含 type（0=一般喇叭 1=高音喇叭 2=重低音 3=擴大機），前台依 type 分區顯示
+     * 回傳含 type（0=一般喇叭 1=高音喇叭 2=重低音 3=擴大機 4=DSP），前台依 type 分區顯示
      *
      * @return \Illuminate\Http\Response|\Illuminate\Contracts\Routing\ResponseFactory
      */
@@ -28,6 +28,7 @@ class CarAudioAccessoriesController extends Controller
             return response()->json([
                 'result' => $query->orderByDesc('is_top')   /* 2026-09-30：置頂在前（原本 ASC 是反的） */
                     ->orderBy('sort', 'ASC')
+                    ->orderBy('id', 'ASC')
                     ->get()
             ]);
         } catch (\Throwable $th) {

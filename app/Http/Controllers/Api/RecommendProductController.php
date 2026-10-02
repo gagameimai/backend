@@ -18,7 +18,7 @@ class RecommendProductController extends Controller
     {
         try {
             $rows = RecommendProductModel::where('status', 1)
-                ->orderByDesc('sort')
+                ->orderBy('sort', 'ASC')
                 ->orderByDesc('created_at')
                 ->get();
 

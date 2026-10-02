@@ -42,8 +42,15 @@ class ListBannerController extends Controller
                     'page_name' => $page['name'],
                     'type_key' => (string) $typeKey,
                     'type_name' => $typeName,
+                    'url' => is_array(config('list_banner.urls.' . $pageKey)) ? (config('list_banner.urls.' . $pageKey)[$typeKey] ?? '') : (config('list_banner.urls.' . $pageKey) ?? ''),
                     'img' => $found->img ?? null,
                     'img_mobile' => $found->img_mobile ?? null,
+                    'kicker' => $found->kicker ?? null,
+                    'title' => $found->title ?? null,
+                    'description' => $found->description ?? null,
+                    'kicker_color' => $found->kicker_color ?? null,
+                    'title_color' => $found->title_color ?? null,
+                    'desc_color' => $found->desc_color ?? null,
                 ];
             }
         }
@@ -79,7 +86,16 @@ class ListBannerController extends Controller
 
         ListBannerModel::updateOrCreate(
             ['page_key' => $page_key, 'type_key' => $type_key],
-            ['img' => $request->input('img') ?: null, 'img_mobile' => $request->input('img_mobile') ?: null]
+            [
+                'img' => $request->input('img') ?: null,
+                'img_mobile' => $request->input('img_mobile') ?: null,
+                'kicker' => trim((string) $request->input('kicker')) ?: null,
+                'title' => trim((string) $request->input('title')) ?: null,
+                'description' => trim((string) $request->input('description')) ?: null,
+                'kicker_color' => $request->input('kicker_color') ?: null,
+                'title_color' => $request->input('title_color') ?: null,
+                'desc_color' => $request->input('desc_color') ?: null,
+            ]
         );
 
         return response()->json([

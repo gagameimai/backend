@@ -21,9 +21,17 @@ return [
                     'name' => '關於我們',
                     'route' => 'about',
                 ],
+                'content_policy' => [
+                    'name' => '內容來源與更正聲明',
+                    'route' => 'content_policy',
+                ],
                 'website' => [
                     'name' => '網站基本設定',
                     'route' => 'website',
+                ],
+                'seo' => [
+                    'name' => 'SEO／GEO 設定',
+                    'route' => 'seo',
                 ],
                 'watermark' => [
                     'name' => '浮水印設定',
@@ -87,6 +95,10 @@ return [
             'icon' => 'fa-brands fa-product-hunt',
             'name' => '產品管理',
             'belongs' => [
+                'product_category' => [
+                    'name' => '產品類別開關',
+                    'route' => 'product_category',
+                ],
                 'car_brand' => [
                     'name' => '汽車品牌',
                     'route' => 'car_brand',

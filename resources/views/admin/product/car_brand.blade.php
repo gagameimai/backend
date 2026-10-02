@@ -109,32 +109,24 @@
                                     <tr>
                                         <th>名稱</th>
                                         <th>建立時間</th>
-                                        <th style="width: 10%">
-                                            排序
-                                            <a href="javascript:void(0)" @click="sortItems">
-                                                <i class="fas fa-sync-alt text-gray"></i>
-                                            </a>
-                                        </th>
+                                        <th style="width: 20%">排序<small class="text-muted d-block" style="font-weight:400">數字小的在前。拖曳 ☰ 或按 ↑ ↓ 調整，改數字也行（自動儲存）</small></th>
                                         <th style="width: 10%">狀態</th>
                                         <th style="width: 15%">功能</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(item, num) in items" :key="item.id">
+                                    <tr v-for="(item, num) in items" :key="item.id" :draggable="handleDown" :class="{'sort-over': dragOverIdx === num && dragFrom > num, 'sort-over-down': dragOverIdx === num && dragFrom >= 0 && dragFrom < num}" @dragstart="dragStart(num, $event)" @dragenter.prevent="dragEnter(num)" @dragover.prevent @drop.prevent="dropRow(num)" @dragend="dragEnd">
                                         <td>@{{ item.name }}</td>
                                         <td>@{{ item.created_at }}</td>
-                                        <td>
-                                            <input type="number" class="form-control" v-model="item.sort">
+                                        <td style="white-space:nowrap">
+                                            <span class="sort-handle" title="按住拖曳" @mousedown="handleDown = true" @mouseup="handleDown = false">☰</span>
+                                            <a href="javascript:void(0)" class="sort-arrow" title="往前一格" @click="moveItem(num, -1)">↑</a>
+                                            <a href="javascript:void(0)" class="sort-arrow" title="往後一格" @click="moveItem(num, 1)">↓</a>
+                                            <input type="number" class="form-control sort-num" v-model="item.sort" @change="sortItems">
                                         </td>
                                         <td>
-                                            <a v-if="item.status == 1" class="btn btn-white btn-sm" href="javascript:void(0)" @click="statusItem(item.id)">
-                                                <i class="fas fa-check-circle text-green"></i>
-                                                啟用
-                                            </a>
-                                            <a v-else class="btn btn-white btn-sm" href="javascript:void(0)" @click="statusItem(item.id)">
-                                                <i class="fas fa-times-circle text-red"></i>
-                                                停用
-                                            </a>
+                                            <label class="sw-toggle" :title="item.status == 1 ? '啟用中（點一下停用）' : '已停用（點一下啟用）'"><input type="checkbox" :checked="item.status == 1" @click.prevent="statusItem(item.id)"><span class="sw-slider"></span></label>
+                                            <span class="sw-text" :class="item.status == 1 ? 'on' : 'off'">@{{ item.status == 1 ? '啟用' : '停用' }}</span>
                                         </td>
                                         <td class="method-button">
                                             <button class="btn btn-primary btn-sm" @click="open('edit', item.id)">
@@ -163,6 +155,7 @@
 @section('javascript')
     <script type="text/javascript">
         var vm = new Vue({
+            mixins: [window.sortMixin || {}],
             el: '#container',
             data: {
                 url: '{{ route('admin.car_brand') }}',
@@ -238,7 +231,8 @@
                     try {
                         axios.get(vm.url + '/all', {
                             params: {
-                                page: page
+                                page: page,
+                                per_page: 500
                             }
                         }).then(function(response) {
                             let total = Math.ceil(response.data.items.total / response.data.items.per_page);
@@ -291,6 +285,8 @@
                         vm.showMessage('error', error);
                     }
                 },
+                // 排序只在同一個「啟用／停用」組內調整（列表固定先排啟用、再排停用）
+                sortGroupKey: function(item) { return parseInt(item.status, 10) === 1 ? 1 : 0; },
                 sortItems: function() {
                     if (vm.items.length == 0) return false;
 

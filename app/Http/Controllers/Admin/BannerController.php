@@ -25,13 +25,13 @@ class BannerController extends Controller
      *
      * @return \Illuminate\Http\Response|\Illuminate\Contracts\Routing\ResponseFactory
      */
-    public function all()
+    public function all(Request $request)
     {
         return response()->json([
             'items' => BannerModel::orderByDesc('status')
                 ->orderBy('sort', 'ASC')
                 ->orderByDesc('created_at')
-                ->paginate(15)
+                ->paginate(min(max((int) $request->input('per_page', 15), 1), 500))
         ]);
     }
 
@@ -44,7 +44,8 @@ class BannerController extends Controller
     public function create(BannerResquest $request)
     {
         BannerModel::create([
-            'name' => $request->input('name'),
+            'sort' => ((int) BannerModel::max('sort')) + 1,   // 新資料排最後（排序數字小的在前）
+            'name' => (string) $request->input('name', ''),
             'url' => $request->input('url'),
             'img' => $request->input('img'),
             'img_mobile' => $request->input('img_mobile'),
@@ -71,7 +72,7 @@ class BannerController extends Controller
                 'message' => '查無資料'
             ], 400);
         } else {
-            $item->name = $request->input('name');
+            $item->name = (string) $request->input('name', '');
             $item->url = $request->input('url');
             $item->img = $request->input('img');
             $item->img_mobile = $request->input('img_mobile');

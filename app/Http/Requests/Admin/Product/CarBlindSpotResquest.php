@@ -16,6 +16,7 @@ class CarBlindSpotResquest extends BaseRequest
         return [
             'name' => 'required',
             'img' => 'required',
+            'memo_in' => 'nullable|string',
             'content' => 'required',
             'is_top' => 'required|integer',
             'status' => 'required|integer',
@@ -32,6 +33,7 @@ class CarBlindSpotResquest extends BaseRequest
         return [
             'name' => '名稱',
             'img' => '圖片',
+            'memo_in' => '詳情頁摘要',
             'content' => '內文敘述',
             'is_top' => '置頂',
             'status' => '狀態',

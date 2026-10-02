@@ -28,7 +28,9 @@ class CarHeadUnitController extends Controller
      */
     public function all(Request $request)
     {
-        $query = CarHeadUnitModel::orderByDesc('created_at');
+        $query = CarHeadUnitModel::orderByDesc('is_top')
+            ->orderBy('sort', 'ASC')
+            ->orderBy('id', 'ASC');
 
         if ($request->filled('name')) {
             $query = $query->where('name', 'LIKE', "%{$request->input('name')}%");
@@ -36,7 +38,7 @@ class CarHeadUnitController extends Controller
         }
 
         return response()->json([
-            'items' => $query->paginate(15),
+            'items' => $query->paginate(min(max((int) $request->input('per_page', 15), 1), 500)),
             'is_search' => $isSearch ?? false
         ]);
     }
@@ -50,6 +52,7 @@ class CarHeadUnitController extends Controller
     public function create(CarHeadUnitResquest $request)
     {
         CarHeadUnitModel::create([
+            'sort' => ((int) CarHeadUnitModel::max('sort')) + 1,
             'type' => $request->input('type'),
             'name' => $request->input('name'),
             'img' => $request->input('img'),

@@ -1,6 +1,6 @@
 # 美邁官網後台與 Agent API 完整操作手冊（給 Hermes）
 
-版本：2026-09-30　依據：本機 backend（Laravel 8）與 frontend-v2（Nuxt 3）程式碼逐檔閱讀。
+版本：2026-10-01（後端修正已部署版）　依據：本機 backend（Laravel 8）與 frontend-v2（Nuxt 3）程式碼逐檔閱讀。
 每一條都是照程式寫的；程式裡看不出來、需要在正式站驗證的地方，會標「【待驗證】」。
 
 > **Hermes 開工順序（每次都照這個，不要重新摸索）**
@@ -9,6 +9,68 @@
 > 3. 照本手冊第 9 章的標準作業流程操作。
 > 4. 寫入後一定讀回驗證（第 10 章），回報時附「讀回的資料」而不是只說成功。
 > 5. 改完資料，前台要重新產生才會更新（第 1 章）。
+
+
+## 0. 2026-10-01 部署後：舊版 vs 新版 問題集中表（先看這章）
+
+後端工程師已於 2026-10-01 合併並部署下列修正（依老闆告知；Hermes 開工時仍要照 0.2 做一次「版本確認」，確認正式站真的是新版再用新行為）。
+
+### 0.1 舊版有什麼問題 → 新版怎麼處理 → Hermes 要改掉的習慣
+
+| # | 舊版問題（9/30 之前） | 新版行為（2026-10-01 部署） | Hermes 要改的做法 |
+|---|---|---|---|
+| 1 | 車框圖片網址被默默清空：網域或 `%20` 編碼對不上、沒送的 `imgArr` 格子都被清成空字串 | 自動修正網域與編碼；沒送的格子保留；對不到檔案回 422 並指出哪一格 | PATCH 車框只送要改的格子；看到 422 就照訊息修網址，不要再「整份重送」 |
+| 2 | 所有圖片欄位只收「以 APP_URL/storage 開頭且沒編碼」的站內網址 | 收站內網址、外部 `https://` 圖片、`data:image/...;base64`、multipart 檔案；外部圖自動下載存到 `files/1/AgentImport/年月/` | 可以直接把生成好的圖網址填進 `img`，不必先 upload；要指定資料夾才用 `POST /api/agent/upload` |
+| 3 | `PATCH /{id}` 沒送的欄位被清空，所以必須先 GET 再整份送回 | 伺服器先讀現有資料再合併，沒送的欄位沿用 | 只送要改的欄位 |
+| 4 | `list_banner`／`home_section` 送 `img` 會把 `img_mobile` 清成 null（反之亦然） | 合併，只改送的那一張 | 同上 |
+| 5 | `POST` 新增成功只回「新增成功」，不知道新 id | 回 `{"message":"新增成功","id":N,"item":{…}}` | 直接用回傳的 `id`，不要再用 `GET all?name=` 猜 |
+| 6 | `PATCH …/{id}/status`（top、pinned、home 同）是「切換」，body 送什麼都沒用，重試一次就切回去 | 帶 body（例 `{"status":1}`）＝直接設定；已經是那個值回 `{"unchanged":true}`；不帶 body 仍是切換 | 一律帶 body 設定，不要用切換 |
+| 7 | 新增／更新不收 `sort`，只能用 `PATCH …/all/sort` | POST／PATCH 可帶 `sort`（`install_case`、`recommend_product` 除外，維持原邏輯） | 單筆排序直接帶 `sort`；整批重排才用 `all/sort` |
+| 8 | 寫入後不知道圖片有沒有真的存進去 | 回應附 `saved_images`；存進去是空的附 `warnings` | 看到 `warnings` 就是沒成功，要重做並回報 |
+| 9 | 欄位意義看不懂，每次重新摸索 | `GET /api/agent/schema` 每個資源有 `docs`（後台叫什麼、顯示在前台哪裡、每個欄位做什麼）、`image_fields`、頂層 `image_input`、`common_fields` | 不確定就讀 schema 的 docs，不要猜 |
+| 10 | 後台改完前台不會更新，也沒辦法觸發 | `POST /api/agent/publish`（需 `publish` 權限；工程師未設定觸發網址時回 501） | 寫完資料呼叫 publish；回 501 就回報「後台已改、前台待工程師重新產生」 |
+| 11 | 導入事例首頁上限 3 筆只在 `/home` 端點檢查，POST／PATCH 直接設 `is_home=1` 會繞過 | create／update 也檢查，超過回 400「首頁最多只能放 3 筆」 | 先把舊的一筆 `is_home=0` 再設新的 |
+| 12 | `car_media`／`car_fitting`／`car_blind_spot` 的 `all/sort` 寫到 `car_frame` 資料表 | 各寫正確資料表（盲點資料表沒有 `sort` 欄位，該端點仍不能用） | 盲點偵測不要用排序端點 |
+| 13 | `config/list_banner` 標籤錯：fitting 標「影像・安全」、safety 標「盲點偵測」 | 改為 車用配件（/fitting）、影像・安全（/safety） | 照 `GET /api/agent/list_banner/all` 回的名稱對頁面 |
+| 14 | 浮水印設定沒有 API | 新增 `watermark` 資源（`GET all`、`POST {key}`、`DELETE {key}`） | 見 7.20 |
+| 15 | `car_blind_spot` 的 schema 列了 `PATCH …/{id}/spc`，但後端沒有這個方法，打了會 500 | 已從 schema 移除 | 不要打 spc |
+| 16 | 前台商品列表置頂反向（`is_top` 小→大，置頂反而在最後；9 支 API） | 置頂在前 | 設 `is_top=1` 後，前台列表（重新產生後）會排最前 |
+| 17 | 停用商品的詳情頁仍打得開（前台詳情 API 不檢查 status） | 10 支詳情 API 加 `status=1`，停用回 404 | 下架用 `status=0` 即可，不必刪除 |
+| 18 | 刪除車廠／車款／資源分類／商品不檢查關聯，留下孤兒資料 | 還被引用就回 400「仍被 N 筆 X 使用中，無法刪除」；盲點商品刪除時子資料「適用車款」一起刪 | 收到 400 就先處理被引用的資料，或改停用 |
+| 19 | 車框刪單張圖（`PATCH …/{id}/img`）會實體刪檔，共用同一張圖的資料變壞圖 | 只清空該格網址，檔案留在檔案管理員 | 可以放心清格子；要清檔案另外用檔案管理員 |
+| 21 | `website.content` 整份取代，少帶一個鍵就被清掉 | 本機已改成沒送的鍵沿用（第 129 項，**待再部署**） | 部署前照 7.19 整份送；部署後只送要改的鍵 |
+| 20 | 首頁精選商品會顯示已停用的商品 | 前台精選只顯示 `status=1` 的商品；後台列表照常 | 下架商品不必另外動精選 |
+
+### 0.2 版本確認（每次開工第一件事）
+
+```bash
+curl -s -H "X-Agent-Key: $MEIMAI_AGENT_KEY" https://admin.meimai.com.tw/api/agent/schema > /tmp/schema.json
+```
+看回應裡有沒有這三樣，**三樣都有＝新版**：
+1. `resources.watermark`（浮水印資源）
+2. `resources.car_media.docs`（白話說明）
+3. 頂層 `image_input`
+
+再做一個無害測試：對任一已啟用的商品 `PATCH /api/agent/car_dashcam/{id}/status` 帶 `{"status":1}`，新版會回 `{"unchanged":true}`，**不會把它切成停用**。
+如果三樣缺任何一樣，或 status 測試把商品切成了停用：**正式站還是舊版**，請立刻把它切回來、停止使用新行為、照第 11 章舊版注意事項操作，並回報老闆。
+
+### 0.3 路徑與網址總表（不要記錯）
+
+| 用途 | 路徑／網址 |
+|---|---|
+| 後台畫面 | `https://admin.meimai.com.tw/`（登入後 `/main`） |
+| Agent API | `https://admin.meimai.com.tw/api/agent/...`，header `X-Agent-Key: $MEIMAI_AGENT_KEY`（金鑰只從環境變數讀） |
+| 前台公開 API（驗證訪客看到什麼） | `https://admin.meimai.com.tw/api/...`，不需金鑰 |
+| 前台網站 | `https://clarion.meimai.com.tw/...`（靜態網站，後台改完要重新產生） |
+| 圖片對外網址 | `https://admin.meimai.com.tw/storage/files/1/<資料夾>/<檔名>` |
+| 圖片在伺服器上 | `storage/app/public/files/1/...`（＝後台「檔案管理員」看到的那棵樹） |
+| Agent 自動存圖 | `files/1/AgentImport/YYYYMM/`（填外部網址或 base64 時） |
+| `upload` 預設資料夾 | `files/1/Agent/`（沒帶 `folder` 時） |
+| 浮水印檔 | `storage/app/public/watermark-config/`（備份在 `watermark-config/backup/`） |
+| 老闆本機程式 | `D:\MeimaiCode(不能刪)\backend`（後端）、`D:\MeimaiCode(不能刪)\frontend-v2`（前台） |
+| 工程師看的草稿與交辦 | `D:\MeimaiCode(不能刪)\260706 claude改版相關產出\`（`工程師必看_本次更改紀錄_20260906.txt`、`工程師交付_後端API修正_20260930\`） |
+| 這份手冊 | `backend/docs/美邁後台與AgentAPI完整操作手冊_20260930.md`（英文檔名 `Meimai_Backend_AgentAPI_Full_Manual_20260930.md`） |
+| 網站地圖與前後台分工 | `backend/docs/網站地圖與前後台對接對照_20260930.md` |
 
 ---
 
@@ -135,7 +197,7 @@ website／qa／about（單一設定，存在 setting 表，用 type 區分）
 
 ### 3.4 切換型端點（易踩雷）
 
-`status`、`top`（商品）、`pinned`／`home`（導入事例）都是「目前是 1 就變 0、是 0 就變 1」。不帶 body 維持「切換」；**帶 body（如 `{"status":1}`）會直接設定成該值，已相同回 `unchanged`**（2026-09-30 起，需工程師部署）。未部署前請先 `GET` 讀現況再決定是否呼叫。
+`status`、`top`（商品）、`pinned`／`home`（導入事例）都是「目前是 1 就變 0、是 0 就變 1」。不帶 body 維持「切換」；**帶 body（如 `{"status":1}`）會直接設定成該值，已相同回 `unchanged`**（2026-10-01 已部署；開工時照第 0.2 節確認版本）。
 
 ### 3.5 常見錯誤碼
 
@@ -289,7 +351,7 @@ curl -H "X-Agent-Key: $KEY" -F "file=@DSP1.webp" \
 - `car_media` 前台完全不看 `sort`（只看 `is_top`＋名稱）；`car_blind_spot` 沒有 `sort` 欄位。
 - `is_top` 翻轉請用 `PATCH /{id}/top`（切換）或 `PATCH /{id}` 帶 `is_top`。
 
-> 2026-09-30 已修正：商品類前台 `is_top` 一律「大到小」，置頂在前（原本 8 支 API 寫反，工程師合併後生效）。
+> 2026-09-30 已修正：商品類前台 `is_top` 一律「大到小」，置頂在前（原本 9 支 API 寫反；2026-10-01 已部署）。
 
 ---
 
@@ -467,7 +529,7 @@ curl -H "X-Agent-Key: $KEY" -F "file=@DSP1.webp" \
 ### 7.19 website／qa／about　設定類（單一份資料）
 
 - 路徑：`GET /api/agent/{website|qa|about}/all`、`PATCH /api/agent/{website|qa|about}`（沒有 id）。
-- **website**：`content` 是一個 JSON 物件，欄位固定：`copyright`（頁尾版權文字）、`address`、`tel`、`email`、`facebook`、`instagram`、`youtube`（社群網址；**沒填的社群，前台頁尾就不會顯示該圖示**）。**整份取代**：先 GET、改欄位、`PATCH {"content": {整份物件}}`。公司名稱、地址、電話要跟前台 `composables/useSiteInfo.js` 逐字一致（地址 `桃園市桃園區國信街35號`、電話 `03-2170098`）。
+- **website**：`content` 是一個 JSON 物件，欄位固定：`copyright`（頁尾版權文字）、`address`、`tel`、`email`、`facebook`、`instagram`、`youtube`（社群網址；**沒填的社群，前台頁尾就不會顯示該圖示**）。目前正式站是**整份取代**：先 GET、改欄位、`PATCH {"content": {整份物件}}`。本機已改成「沒送的鍵沿用現有值」（工程師必看第 129 項，**要再部署一次才生效**；部署後只送要改的鍵即可，例 `{"content":{"tel":"03-…"}}`）。qa／about 是整段 HTML，維持整份取代。公司名稱、地址、電話要跟前台 `composables/useSiteInfo.js` 逐字一致（地址 `桃園市桃園區國信街35號`、電話 `03-2170098`）。
 - **qa**：`content` 是整份 HTML（常見問題頁）。整份取代。
 - **about**：`content` 是整份 HTML（品牌故事頁的內文區）。整份取代；頁面大標與 Banner 由前台程式與 `list_banner.about` 決定，不在這裡。
 
@@ -586,7 +648,7 @@ curl -H "X-Agent-Key: $KEY" -F "file=@DSP1.webp" \
 
 ## 11. 已知問題與待修正清單
 
-### 11.1 已在本機修好（待工程師合併上線，工程師必看第 111、112 項）
+### 11.1 已修好並於 2026-10-01 部署（工程師必看第 111～123 項；集中對照見第 0 章）
 
 - 車框圖片網址被默默清空：網域／編碼不符、沒送的格子都會被清成空字串（已修，且對不到檔案改回 422）。
 - Agent API 全資源圖片統一處理、PATCH 合併、寫入後驗證、欄位白話說明（`/api/agent/schema` 的 `docs`）。

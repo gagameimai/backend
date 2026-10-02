@@ -7,7 +7,7 @@ return [
     // types 為陣列：同一個元件被多個品牌／分類共用，各自可以設定不同 banner（type_key => 顯示用標籤）。
     'pages' => [
         'multimedia' => [
-            'name' => '多媒體安卓機（共用元件，依分類區分）',
+            'name' => '多媒體安卓機／車型專用機頁（共 4 個版本）',
             'types' => [
                 '0' => 'MM 多媒體安卓機 ME 系列',
                 '1' => 'MM 車型專用機',
@@ -16,14 +16,14 @@ return [
             ],
         ],
         'camera' => [
-            'name' => '鏡頭（共用元件，依品牌區分）',
+            'name' => '鏡頭頁（MM、歌樂各一個）',
             'types' => [
                 'mm' => 'MM 美邁',
                 'clarion' => 'Clarion 歌樂',
             ],
         ],
         'dashcam' => [
-            'name' => '行車記錄器（共用元件，依品牌區分）',
+            'name' => '行車記錄器頁（MM、歌樂各一個）',
             'types' => [
                 'mm' => 'MM 美邁',
                 'clarion' => 'Clarion 歌樂',
@@ -94,12 +94,36 @@ return [
             'types' => null,
         ],
         'productLanding' => [
-            'name' => '產品分類頁（共用元件，依分類區分）',
+            'name' => '產品分類入口頁（安卓主機／汽車音響／行車記錄器）',
             'types' => [
-                'landingHeadunit' => '安卓主機（/products/android-headunit）',
-                'landingAudio' => '汽車音響（/products/car-audio）',
-                'landingDashcam' => '行車記錄器（/products/dash-cam）',
+                'landingHeadunit' => '安卓主機入口頁',
+                'landingAudio' => '汽車音響入口頁',
+                'landingDashcam' => '行車記錄器入口頁',
             ],
         ],
+    ],
+
+    // 前台網址（後台列表顯示用，讓人知道這一列對應哪個頁面）。
+    // 有 types 的頁面用「頁面代碼 => [分類代碼 => 網址]」，沒有 types 的頁面直接是網址字串。
+    'urls' => [
+        'carFrame' => '/carFrame',
+        'fitting' => '/fitting',
+        'safety' => '/safety',
+        'headUnit' => '/headUnit',
+        'audioAccessories' => '/audioAccessories',
+        'portable' => '/portable',
+        'headrest' => '/headrest',
+        'clarionOverview' => '/clarion/overview',
+        'mmOverview' => '/mm/overview',
+        'about' => '/about',
+        'cases' => '/cases',
+        'qa' => '/qa',
+        'searchPage' => '/searchPage',
+        'download' => '/download',
+        'partner' => '/partner',
+        'multimedia' => ['0' => '/mm/me', '1' => '/mm/oem', '2' => '/clarion/gl', '3' => '/clarion/oem'],
+        'camera' => ['mm' => '/mm/camera', 'clarion' => '/clarion/camera'],
+        'dashcam' => ['mm' => '/mm/dashcam', 'clarion' => '/clarion/dashcam'],
+        'productLanding' => ['landingHeadunit' => '/products/android-headunit', 'landingAudio' => '/products/car-audio', 'landingDashcam' => '/products/dash-cam'],
     ],
 ];

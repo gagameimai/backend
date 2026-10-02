@@ -17,6 +17,7 @@ class HomeSectionResquest extends BaseRequest
             'content' => 'nullable|string',
             'img' => 'nullable|string',
             'img_mobile' => 'nullable|string',
+            'bg_color' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
         ];
     }
 
@@ -31,6 +32,7 @@ class HomeSectionResquest extends BaseRequest
             'content' => '區塊內容',
             'img' => '背景圖（電腦版）',
             'img_mobile' => '背景圖（手機版）',
+            'bg_color' => '區塊底色',
         ];
     }
 }

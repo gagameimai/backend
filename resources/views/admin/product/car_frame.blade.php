@@ -646,14 +646,8 @@
                                         <td>@{{ item.img2 == 0 ? 'X' : 'O' }}</td>
                                         <!--<td>@{{ item.created_at }}</td>-->
                                         <td>
-                                            <a v-if="item.status == 1" class="btn btn-white btn-sm" href="javascript:void(0)" @click="statusItem(item.id)">
-                                                <i class="fas fa-check-circle text-green"></i>
-                                                啟用
-                                            </a>
-                                            <a v-else class="btn btn-white btn-sm" href="javascript:void(0)" @click="statusItem(item.id)">
-                                                <i class="fas fa-times-circle text-red"></i>
-                                                停用
-                                            </a>
+                                            <label class="sw-toggle" :title="item.status == 1 ? '啟用中（點一下停用）' : '已停用（點一下啟用）'"><input type="checkbox" :checked="item.status == 1" @click.prevent="statusItem(item.id)"><span class="sw-slider"></span></label>
+                                            <span class="sw-text" :class="item.status == 1 ? 'on' : 'off'">@{{ item.status == 1 ? '啟用' : '停用' }}</span>
                                         </td>
                                         <td class="method-button">
                                             <button class="btn btn-primary btn-sm" @click="open('edit', item.id)">

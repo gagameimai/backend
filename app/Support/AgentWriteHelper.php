@@ -77,6 +77,41 @@ class AgentWriteHelper
             self::mergeKv($request, $cfg);
         }
 
+        // 1c) website（網站基本設定）：content 是一個物件（copyright／address／tel／email／facebook／instagram／youtube）。
+        //     原本是整份取代，Hermes 少帶一個鍵那個鍵就不見；改成「沒送的鍵沿用現有值」，送 {"content":{"tel":"..."}} 只改電話。
+        //     qa／about 的 content 是一整段 HTML，沒有可合併的結構，維持整份取代。
+        if ($resource === 'website' && $request->method() === 'PATCH' && is_array($request->input('content'))) {
+            try {
+                $row = \App\Models\SettingModel::where('type', 'website')->first();
+                $cur = $row ? json_decode($row->content, true) : null;
+                if (is_array($cur)) {
+                    $in = $request->input('content');
+                    $merged = array_merge($cur, $in);
+                    // seo 再往下合併一層：只送 seo.company_en 不會把 company_zh／pages／faq 清掉。
+                    // seo.pages 以「網址 → 標題與說明」合併（送哪一頁改哪一頁）；seo.flags 逐個旗標合併；
+                    // seo.faq 是整份清單，有送就整份取代（要刪一題就送少一題的完整清單）。
+                    if (isset($in['seo']) && is_array($in['seo']) && isset($cur['seo']) && is_array($cur['seo'])) {
+                        $seo = array_merge($cur['seo'], $in['seo']);
+                        foreach (['pages', 'flags'] as $k) {
+                            if (isset($in['seo'][$k]) && is_array($in['seo'][$k]) && isset($cur['seo'][$k]) && is_array($cur['seo'][$k])) {
+                                $seo[$k] = array_merge($cur['seo'][$k], $in['seo'][$k]);
+                                // 要刪掉某一頁的覆蓋就送 null：{"seo":{"pages":{"/about":null}}}
+                                $seo[$k] = array_filter($seo[$k], function ($v) { return $v !== null; });
+                            }
+                        }
+                        $merged['seo'] = $seo;
+                    }
+                    // categories：只送 clarion 不會把 mm 清掉（各品牌的清單本身仍是整份取代，順序＝清單順序）
+                    if (isset($in['categories']) && is_array($in['categories']) && isset($cur['categories']) && is_array($cur['categories'])) {
+                        $merged['categories'] = array_merge($cur['categories'], $in['categories']);
+                    }
+                    $request->merge(['content' => $merged]);
+                }
+            } catch (\Throwable $e) {
+                // 讀不到就照原本整份取代
+            }
+        }
+
         // 2) 圖片統一
         $fields = self::imageFields($resource);
         if (!$fields) return null;

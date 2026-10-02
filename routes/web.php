@@ -38,6 +38,11 @@ Route::group([
                 Route::patch('/', 'WebsiteInfoController@update');
             });
 
+            // SEO／GEO 設定（讀寫共用 website 的 all / PATCH）
+            Route::prefix('seo')->group(function () {
+                Route::get('/', 'SeoController@index')->name('admin.seo');
+            });
+
             // 網站基本惡定
             Route::prefix('qa')->group(function () {
                 Route::get('/', 'QaController@index')->name('admin.qa');
@@ -50,6 +55,13 @@ Route::group([
                 Route::get('/', 'AboutController@index')->name('admin.about');
                 Route::get('all', 'AboutController@all');
                 Route::patch('/', 'AboutController@update');
+            });
+
+            // 內容來源與更正聲明（前台 /content-policy，中英文各一份）
+            Route::prefix('content_policy')->group(function () {
+                Route::get('/', 'ContentPolicyController@index')->name('admin.content_policy');
+                Route::get('all', 'ContentPolicyController@all');
+                Route::patch('/', 'ContentPolicyController@update');
             });
 
             // 浮水印設定（安卓車框圖片用）
@@ -329,6 +341,11 @@ Route::group([
                     Route::patch('status', 'CarCameraController@status');
                     Route::patch('top', 'CarCameraController@top');
                 });
+            });
+
+            // 產品類別開關（前台選單／總覽頁的類別顯示、順序、名稱）
+            Route::prefix('product_category')->group(function () {
+                Route::get('/', 'CategorySwitchController@index')->name('admin.product_category');
             });
 
             Route::prefix('car_headrest')->group(function () {

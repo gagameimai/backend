@@ -31,14 +31,14 @@ class RecommendProductController extends Controller
      */
     public function all(Request $request)
     {
-        $query = RecommendProductModel::orderByDesc('sort')->orderByDesc('created_at');
+        $query = RecommendProductModel::orderBy('sort', 'ASC')->orderByDesc('created_at');
 
         if ($request->filled('product_type')) {
             $query = $query->where('product_type', $request->input('product_type'));
             $isSearch = true;
         }
 
-        $items = $query->paginate(15);
+        $items = $query->paginate(min(max((int) $request->input('per_page', 15), 1), 500));
 
         // 補上每筆的商品名稱／圖片／連結，方便後台列表顯示
         $resolved = RecommendProductResolver::resolveMany($items->getCollection());
@@ -86,7 +86,7 @@ class RecommendProductController extends Controller
         RecommendProductModel::create([
             'product_type' => $request->input('product_type'),
             'product_id' => $request->input('product_id'),
-            'sort' => $request->input('sort') ?? 0,
+            'sort' => $request->input('sort') ?? (((int) RecommendProductModel::max('sort')) + 1),
             'status' => $request->input('status'),
         ]);
 

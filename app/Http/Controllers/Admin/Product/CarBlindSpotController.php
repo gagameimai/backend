@@ -54,7 +54,7 @@ class CarBlindSpotController extends Controller
         CarBlindSpotModel::create([
             'name' => $request->input('name'),
             'img' => $request->input('img'),
-            'memo_in' => $request->input('memo_in'),
+            'memo_in' => (string) $request->input('memo_in', ''),
             'content' => $request->input('content'),
             'is_top' => $request->input('is_top'),
             'status' => $request->input('status')
@@ -82,7 +82,7 @@ class CarBlindSpotController extends Controller
         } else {
             $item->name = $request->input('name');
             $item->img = $request->input('img');
-            $item->memo_in = $request->input('memo_in');
+            $item->memo_in = (string) $request->input('memo_in', $item->memo_in);
             $item->content = $request->input('content');
             $item->is_top = $request->input('is_top');
             $item->status = $request->input('status');

@@ -261,37 +261,32 @@
                                         <th>名稱</th>
                                         <th>列表圖片</th>
                                         <th>建立時間</th>
+                                        <th style="width: 20%">排序<small class="text-muted d-block" style="font-weight:400">同為「置頂」或同為「一般」之間，數字小的在前（前台一樣）。拖曳 ☰ 或按 ↑ ↓ 調整，改數字也行（自動儲存）</small></th>
                                         <th style="width: 10%">置頂</th>
                                         <th style="width: 10%">狀態</th>
                                         <th style="width: 15%">功能</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(item, num) in items" :key="item.id">
+                                    <tr v-for="(item, num) in items" :key="item.id" :draggable="handleDown" :class="{'sort-over': dragOverIdx === num && dragFrom > num, 'sort-over-down': dragOverIdx === num && dragFrom >= 0 && dragFrom < num}" @dragstart="dragStart(num, $event)" @dragenter.prevent="dragEnter(num)" @dragover.prevent @drop.prevent="dropRow(num)" @dragend="dragEnd">
                                         <td>@{{ item.name }}</td>
                                         <td>
                                             <img v-if="item.img" :src="item.img" style="height:50px;">
                                         </td>
                                         <td>@{{ item.created_at }}</td>
-                                        <td>
-                                            <a v-if="item.is_top == 1" class="btn btn-white btn-sm" href="javascript:void(0)" @click="topItem(item.id)">
-                                                <i class="fas fa-check-circle text-green"></i>
-                                                啟用
-                                            </a>
-                                            <a v-else class="btn btn-white btn-sm" href="javascript:void(0)" @click="topItem(item.id)">
-                                                <i class="fas fa-times-circle text-red"></i>
-                                                停用
-                                            </a>
+                                        <td style="white-space:nowrap">
+                                            <span class="sort-handle" title="按住拖曳" @mousedown="handleDown = true" @mouseup="handleDown = false">☰</span>
+                                            <a href="javascript:void(0)" class="sort-arrow" title="往前一格" @click="moveItem(num, -1)">↑</a>
+                                            <a href="javascript:void(0)" class="sort-arrow" title="往後一格" @click="moveItem(num, 1)">↓</a>
+                                            <input type="number" class="form-control sort-num" v-model="item.sort" @change="sortItems">
                                         </td>
                                         <td>
-                                            <a v-if="item.status == 1" class="btn btn-white btn-sm" href="javascript:void(0)" @click="statusItem(item.id)">
-                                                <i class="fas fa-check-circle text-green"></i>
-                                                啟用
-                                            </a>
-                                            <a v-else class="btn btn-white btn-sm" href="javascript:void(0)" @click="statusItem(item.id)">
-                                                <i class="fas fa-times-circle text-red"></i>
-                                                停用
-                                            </a>
+                                            <label class="sw-toggle" :title="item.is_top == 1 ? '置頂中（點一下取消）' : '未置頂（點一下置頂）'"><input type="checkbox" :checked="item.is_top == 1" @click.prevent="topItem(item.id)"><span class="sw-slider"></span></label>
+                                            <span class="sw-text" :class="item.is_top == 1 ? 'on' : 'off'">@{{ item.is_top == 1 ? '置頂' : '一般' }}</span>
+                                        </td>
+                                        <td>
+                                            <label class="sw-toggle" :title="item.status == 1 ? '啟用中（點一下停用）' : '已停用（點一下啟用）'"><input type="checkbox" :checked="item.status == 1" @click.prevent="statusItem(item.id)"><span class="sw-slider"></span></label>
+                                            <span class="sw-text" :class="item.status == 1 ? 'on' : 'off'">@{{ item.status == 1 ? '啟用' : '停用' }}</span>
                                         </td>
                                         <td class="method-button">
                                             <button class="btn btn-primary btn-sm" @click="open('edit', item.id)">
@@ -322,6 +317,7 @@
     <script type="text/javascript">
         var vm = new Vue({
             el: '#container',
+            mixins: [window.sortMixin || {}],
             data: {
                 url: '{{ route('admin.car_portable') }}',
                 items: {},
@@ -416,6 +412,24 @@
                             break;
                     }
                 },
+                // 排序只在同一組內調整：前台是「置頂在前，再依數字小的在前」，所以置頂／一般各自一組
+                sortGroupKey: function(item) {
+                    return parseInt(item.is_top, 10) === 1 ? 'top' : 'normal';
+                },
+                sortItems: function() {
+                    if (vm.items.length == 0) return false;
+
+                    try {
+                        axios.patch(vm.url + '/all/sort', {items: vm.items}).then(function(response) {
+                            vm.showMessage('success', response.data.message);
+                            vm.getItems(vm.page, false);
+                        }).catch(function(error) {
+                            vm.showMessage('error', error.response.data.message);
+                        });
+                    } catch (error) {
+                        vm.showMessage('error', error);
+                    }
+                },
                 getItems: function(page = 1, pageMove = true) {
                     let vm = this;
                     vm.page = page;
@@ -428,6 +442,7 @@
                         axios.get(vm.url + '/all', {
                             params: {
                                 page: page,
+                                per_page: 500,
                                 name: vm.search.name
                             }
                         }).then(function(response) {

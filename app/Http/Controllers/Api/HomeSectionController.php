@@ -30,6 +30,7 @@ class HomeSectionController extends Controller
                     'content' => $item->content ?? null,
                     'img' => $item->img ?? null,
                     'img_mobile' => $item->img_mobile ?? null,
+                    'bg_color' => $item->bg_color ?? null,
                 ];
             }
 

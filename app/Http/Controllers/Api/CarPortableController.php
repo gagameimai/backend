@@ -20,6 +20,7 @@ class CarPortableController extends Controller
                 ->where('status', 1)
                 ->orderByDesc('is_top')   /* 2026-09-30：置頂在前（原本 ASC 是反的） */
                 ->orderBy('sort', 'ASC')
+                ->orderBy('id', 'ASC')
                 ->get();
 
             return response()->json([

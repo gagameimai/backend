@@ -136,9 +136,9 @@ class CarFrameController extends Controller
                 $img[2] ?? '',
             ];
             
-            $item->img1 = count(array_filter(json_decode($item->img1, true)));
-            $item->img2 = count(array_filter(json_decode($item->img2, true)));
-            $item->img3 = count(array_filter(json_decode($item->img3, true)));
+            $item->img1 = count(array_filter((array) json_decode((string) $item->img1, true)));
+            $item->img2 = count(array_filter((array) json_decode((string) $item->img2, true)));
+            $item->img3 = count(array_filter((array) json_decode((string) $item->img3, true)));
         }
 
         return response()->json([
@@ -256,7 +256,8 @@ class CarFrameController extends Controller
                         $old = $imgArr[$i][$j] ?? '';
                         // 這一格整個沒送：保留原本的圖（以前會被清成空字串，Hermes 只改一張圖時其他圖全消失）。
                         // 後台畫面會把每一格都送上來，刪圖是送空字串，不受影響。
-                        if (!$request->has("imgArr.{$i}.{$j}")) {
+                        // 送 null 也視為「保留原圖」（JSON 陣列沒辦法跳過前面的格子，Agent 可以用 null 佔位）；送空字串才是刪圖。
+                        if (!$request->has("imgArr.{$i}.{$j}") || $request->input("imgArr.{$i}.{$j}") === null) {
                             continue;
                         }
                         $resolved = $this->resolveImg($imgTmp);

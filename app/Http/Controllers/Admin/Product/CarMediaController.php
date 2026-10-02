@@ -29,7 +29,7 @@ class CarMediaController extends Controller
     public function all(Request $request)
     {
         $query = CarMediaModel::orderByDesc('is_top')
-            ->orderByDesc('status')
+            ->orderBy('sort', 'ASC')
             ->orderBy('name', 'ASC');
 
         if ($request->filled('name')) {
@@ -38,7 +38,7 @@ class CarMediaController extends Controller
         }
 
         return response()->json([
-            'items' => $query->paginate(15),
+            'items' => $query->paginate(min(max((int) $request->input('per_page', 15), 1), 500)),
             'is_search' => $isSearch ?? false
         ]);
     }
@@ -52,6 +52,7 @@ class CarMediaController extends Controller
     public function create(CarMediaResquest $request)
     {
         CarMediaModel::create([
+            'sort' => ((int) CarMediaModel::max('sort')) + 1,
             'type' => $request->input('type'),
             'name' => $request->input('name'),
             'img' => $request->input('img'),
@@ -61,7 +62,7 @@ class CarMediaController extends Controller
             'ram' => $request->input('ram'),
             'resolution' => $request->input('resolution'),
             'price' => $request->input('price'),
-            'memo_in' => $request->input('memo_in'),
+            'memo_in' => (string) $request->input('memo_in', ''),
             'content' => $request->input('content'),
             'is_top' => $request->input('is_top'),
             'status' => $request->input('status'),
@@ -96,7 +97,7 @@ class CarMediaController extends Controller
             $item->ram = $request->input('ram');
             $item->resolution = $request->input('resolution');
             $item->price = $request->input('price');
-            $item->memo_in = $request->input('memo_in');
+            $item->memo_in = (string) $request->input('memo_in', $item->memo_in);
             $item->content = $request->input('content');
             $item->is_top = $request->input('is_top');
             $item->status = $request->input('status');

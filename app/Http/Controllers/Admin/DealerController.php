@@ -45,7 +45,7 @@ class DealerController extends Controller
         }
 
         return response()->json([
-            'items' => $query->paginate(15),
+            'items' => $query->paginate(min(max((int) $request->input('per_page', 15), 1), 500)),
             'is_search' => $isSearch ?? false
         ]);
     }
@@ -59,8 +59,9 @@ class DealerController extends Controller
     public function create(DealerResquest $request)
     {
         DealerModel::create([
+            'sort' => ((int) DealerModel::max('sort')) + 1,   // 新資料排最後（排序數字小的在前）
             'name' => $request->input('name'),
-            'county' => $request->input('county'),
+            'county' => $this->countyIndex($request->input('county')),
             'address' => $request->input('address'),
             'tel' => $request->input('tel'),
             'status' => $request->input('status'),
@@ -87,7 +88,7 @@ class DealerController extends Controller
             ], 400);
         } else {
             $item->name = $request->input('name');
-            $item->county = $request->input('county');
+            $item->county = $this->countyIndex($request->input('county'));
             $item->address = $request->input('address');
             $item->tel = $request->input('tel');
             $item->status = $request->input('status');
@@ -183,5 +184,20 @@ class DealerController extends Controller
                 'message' => '狀態更新成功'
             ]);
         }
+    }
+
+    /**
+     * 縣市欄位存的是 config/county.php 的索引（0=台北市…）。
+     * 後台畫面送索引；Agent 常常直接送「桃園市」這種名稱，這裡一律轉成索引，對不到就回傳原值（讓驗證擋）。
+     */
+    private function countyIndex($v)
+    {
+        $list = config('county', []);
+        if (is_string($v) && !ctype_digit($v)) {
+            $name = str_replace('臺', '台', trim($v));
+            $idx = array_search($name, $list, true);
+            return $idx === false ? $v : $idx;
+        }
+        return $v;
     }
 }

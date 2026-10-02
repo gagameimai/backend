@@ -70,6 +70,7 @@ class CarController extends Controller
     public function create(CarResquest $request)
     {
         CarModel::create([
+            'sort' => ((int) CarModel::max('sort')) + 1,   // 新資料排最後（排序數字小的在前）
             'car_brand_id' => $request->input('car_brand_id'),
             'name' => $request->input('name'),
             'year_start' => $request->input('year_start'),

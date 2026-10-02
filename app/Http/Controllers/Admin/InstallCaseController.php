@@ -30,8 +30,11 @@ class InstallCaseController extends Controller
      */
     public function all(Request $request)
     {
+        // 後台列表排序與前台一致：置頂最前面，其餘依安裝日期（沒填用建立時間）由新到舊
         $query = InstallCaseModel::with(['brand', 'car'])
-            ->orderByDesc('sort')->orderByDesc('created_at');
+            ->orderByDesc('is_pinned')
+            ->orderByDesc(DB::raw('COALESCE(installed_at, created_at)'))
+            ->orderByDesc('created_at');
 
         if ($request->filled('name')) {
             $query = $query->where('name', 'LIKE', "%{$request->input('name')}%");
@@ -43,6 +46,9 @@ class InstallCaseController extends Controller
             // 車型下拉用：品牌與車款清單（與安卓車框後台同一份資料）
             'brands' => CarBrandModel::orderByDesc('status')->orderBy('name', 'ASC')->get(),
             'cars' => CarModel::orderByDesc('status')->orderBy('name', 'ASC')->get(),
+            // 目前置頂的那一筆（同一時間只會有一筆置頂）與首頁已使用的筆數，給後台表單提示用
+            'pinned' => InstallCaseModel::where('is_pinned', 1)->select('id', 'name')->first(),
+            'home_ids' => InstallCaseModel::where('is_home', 1)->pluck('id'),
             'is_search' => $isSearch ?? false
         ]);
     }
@@ -72,7 +78,7 @@ class InstallCaseController extends Controller
             return response()->json(['message' => '首頁最多只能放 3 筆，請先把其中一筆關閉'], 400);
         }
 
-        InstallCaseModel::create([
+        $created = InstallCaseModel::create([
             'category' => $request->input('category'),
             'name' => $request->input('name'),
             'img' => $request->input('img'),
@@ -89,6 +95,11 @@ class InstallCaseController extends Controller
             'need' => $request->input('need'),
             'work' => $request->input('work'),
         ]);
+
+        // 同一時間只會有一筆置頂：這筆設為置頂時，其他筆自動取消
+        if ((int) $request->input('is_pinned') === 1) {
+            InstallCaseModel::where('id', '<>', $created->id)->update(['is_pinned' => 0]);
+        }
 
         return response()->json([
             'message' => '新增成功'
@@ -130,6 +141,11 @@ class InstallCaseController extends Controller
             $item->need = $request->input('need');
             $item->work = $request->input('work');
             $item->save();
+
+            // 同一時間只會有一筆置頂：這筆設為置頂時，其他筆自動取消
+            if ((int) $item->is_pinned === 1) {
+                InstallCaseModel::where('id', '<>', $item->id)->update(['is_pinned' => 0]);
+            }
 
             return response()->json([
                 'message' => '更新成功'
@@ -240,6 +256,11 @@ class InstallCaseController extends Controller
 
         $item->is_pinned = $item->is_pinned == 1 ? 0 : 1;
         $item->save();
+
+        // 同一時間只會有一筆置頂：打開這筆時，其他筆自動取消
+        if ($item->is_pinned == 1) {
+            InstallCaseModel::where('id', '<>', $item->id)->update(['is_pinned' => 0]);
+        }
 
         return response()->json([
             'message' => '置頂設定已更新'

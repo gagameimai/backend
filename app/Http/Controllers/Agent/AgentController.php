@@ -115,18 +115,20 @@ class AgentController extends Controller
     }
 
     /**
-     * 通知「重新產生前台」：前台是靜態網站，後台資料改完要重新 generate 才看得到。
-     * 需要工程師設定 .env 的 AGENT_DEPLOY_HOOK_URL（例如 CI／主機上的 webhook 網址）；沒設定就如實回報，不假裝成功。
+     * 通知「重新產生前台」：前台目前為即時讀取，不需要此動作；
+     * 只有改成靜態 generate 部署時，才需在 .env 設定 AGENT_DEPLOY_HOOK_URL（CI／主機 webhook 網址），沒設定回 200 並標示 needed=false。
      * 每分鐘最多觸發一次，避免連續寫入時重複建置。
      */
     public function publish(Request $request)
     {
         $hook = config('agent_api.deploy_hook');
         if (!$hook) {
+            // 前台是即時讀取的伺服器（2026-10-01 實測：後台寫入後前台立即變），不需要重新產生。
             return response()->json([
-                'message' => '尚未設定「重新產生前台」的觸發網址（.env 的 AGENT_DEPLOY_HOOK_URL），請工程師設定後才能使用。後台資料已寫入，但前台要人工重新產生。',
+                'message' => '前台為即時讀取，後台資料寫入後立即生效，不需要重新產生。',
+                'needed' => false,
                 'configured' => false,
-            ], 501);
+            ], 200);
         }
         $lock = 'agent_publish_lock';
         if (\Illuminate\Support\Facades\Cache::has($lock)) {

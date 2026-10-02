@@ -39,6 +39,7 @@ class HomeSectionController extends Controller
                 'content' => $found->content ?? null,
                 'img' => $found->img ?? null,
                 'img_mobile' => $found->img_mobile ?? null,
+                'bg_color' => $found->bg_color ?? null,
             ];
         }
 
@@ -69,6 +70,7 @@ class HomeSectionController extends Controller
                 'content' => $request->input('content') ?: null,
                 'img' => $request->input('img') ?: null,
                 'img_mobile' => $request->input('img_mobile') ?: null,
+                'bg_color' => $request->input('bg_color') ?: null,
             ]
         );
 

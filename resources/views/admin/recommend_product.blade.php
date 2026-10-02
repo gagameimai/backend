@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="alert alert-info">
-                        管理首頁「精選商品」卡片要顯示哪些商品。先選「商品分類」，再選該分類下的「商品」，商品的名稱／圖片會自動帶入，不用重複輸入。
+                        管理首頁「精選商品」卡片要顯示哪些商品。先選「商品分類」，再選該分類下的「商品」，商品的名稱／圖片會自動帶入，不用重複輸入。<br>前台顯示規則：卡片左上角的類別標籤（主機／喇叭／行車記錄器…）由商品分類自動帶出；商品圖請用白底或去背的方形圖（建議 1200×1200，商品佔 8 成），卡片底色是純白；精選只選 1 個會變成大張主打卡、2～3 個置中排列、最多顯示前 8 個（排序數字小的在前）；一個都沒選時，前台會顯示「精選商品準備中」。停用的商品不會顯示。
                     </div>
                 </div>
             </div>
@@ -196,28 +196,27 @@
                                         <th>商品分類</th>
                                         <th>圖片</th>
                                         <th>商品名稱</th>
-                                        <th style="width: 8%">排序</th>
+                                        <th style="width: 20%">排序<small class="text-muted d-block" style="font-weight:400">由上到下就是前台順序（最上面最先顯示，前台最多顯示前 8 個）。拖曳 ☰ 或按 ↑ ↓ 調整，改數字也行（自動儲存）</small></th>
                                         <th style="width: 10%">狀態</th>
                                         <th style="width: 15%">功能</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(item, num) in items" :key="item.id">
+                                    <tr v-for="(item, num) in items" :key="item.id" :draggable="handleDown" :class="{'sort-over': dragOverIdx === num && dragFrom > num, 'sort-over-down': dragOverIdx === num && dragFrom >= 0 && dragFrom < num}" @dragstart="dragStart(num, $event)" @dragenter.prevent="dragEnter(num)" @dragover.prevent @drop.prevent="dropRow(num)" @dragend="dragEnd">
                                         <td>@{{ typeLabel(item.product_type) }}</td>
                                         <td>
                                             <img v-if="item.product_img" :src="item.product_img" style="height:50px;">
                                         </td>
                                         <td>@{{ item.product_name }}</td>
-                                        <td>@{{ item.sort }}</td>
+                                        <td style="white-space:nowrap">
+                                            <span class="sort-handle" title="按住拖曳" @mousedown="handleDown = true" @mouseup="handleDown = false">☰</span>
+                                            <a href="javascript:void(0)" class="sort-arrow" title="往前一格" @click="moveItem(num, -1)">↑</a>
+                                            <a href="javascript:void(0)" class="sort-arrow" title="往後一格" @click="moveItem(num, 1)">↓</a>
+                                            <input type="number" class="form-control sort-num" v-model="item.sort" @change="sortItems">
+                                        </td>
                                         <td>
-                                            <a v-if="item.status == 1" class="btn btn-white btn-sm" href="javascript:void(0)" @click="statusItem(item.id)">
-                                                <i class="fas fa-check-circle text-green"></i>
-                                                啟用
-                                            </a>
-                                            <a v-else class="btn btn-white btn-sm" href="javascript:void(0)" @click="statusItem(item.id)">
-                                                <i class="fas fa-times-circle text-red"></i>
-                                                停用
-                                            </a>
+                                            <label class="sw-toggle" :title="item.status == 1 ? '啟用中（點一下停用）' : '已停用（點一下啟用）'"><input type="checkbox" :checked="item.status == 1" @click.prevent="statusItem(item.id)"><span class="sw-slider"></span></label>
+                                            <span class="sw-text" :class="item.status == 1 ? 'on' : 'off'">@{{ item.status == 1 ? '啟用' : '停用' }}</span>
                                         </td>
                                         <td class="method-button">
                                             <button class="btn btn-primary btn-sm" @click="open('edit', item.id)">
@@ -246,6 +245,7 @@
 @section('javascript')
     <script type="text/javascript">
         var vm = new Vue({
+            mixins: [window.sortMixin || {}],
             el: '#container',
             data: {
                 url: '{{ route('admin.recommend_product') }}',
@@ -374,6 +374,7 @@
                         axios.get(vm.url + '/all', {
                             params: {
                                 page: page,
+                                per_page: 500,
                                 product_type: vm.search.product_type
                             }
                         }).then(function(response) {
@@ -419,6 +420,20 @@
 
                     try {
                         axios.delete(vm.url + '/' + id).then(function(response) {
+                            vm.showMessage('success', response.data.message);
+                            vm.getItems(vm.page, false);
+                        }).catch(function(error) {
+                            vm.showMessage('error', error.response.data.message);
+                        });
+                    } catch (error) {
+                        vm.showMessage('error', error);
+                    }
+                },
+                sortItems: function() {
+                    if (!vm.items || vm.items.length == 0) return false;
+
+                    try {
+                        axios.patch(vm.url + '/all/sort', {items: vm.items}).then(function(response) {
                             vm.showMessage('success', response.data.message);
                             vm.getItems(vm.page, false);
                         }).catch(function(error) {

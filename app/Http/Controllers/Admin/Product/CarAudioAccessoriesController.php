@@ -28,7 +28,9 @@ class CarAudioAccessoriesController extends Controller
      */
     public function all(Request $request)
     {
-        $query = CarAudioAccessoriesModel::orderByDesc('created_at');
+        $query = CarAudioAccessoriesModel::orderByDesc('is_top')
+            ->orderBy('sort', 'ASC')
+            ->orderBy('id', 'ASC');
 
         if ($request->filled('name')) {
             $query = $query->where('name', 'LIKE', "%{$request->input('name')}%");
@@ -36,7 +38,7 @@ class CarAudioAccessoriesController extends Controller
         }
 
         return response()->json([
-            'items' => $query->paginate(15),
+            'items' => $query->paginate(min(max((int) $request->input('per_page', 15), 1), 500)),
             'is_search' => $isSearch ?? false
         ]);
     }
@@ -50,6 +52,7 @@ class CarAudioAccessoriesController extends Controller
     public function create(CarAudioAccessoriesResquest $request)
     {
         CarAudioAccessoriesModel::create([
+            'sort' => ((int) CarAudioAccessoriesModel::max('sort')) + 1,
             'type' => $request->input('type'),
             'name' => $request->input('name'),
             'img' => $request->input('img'),

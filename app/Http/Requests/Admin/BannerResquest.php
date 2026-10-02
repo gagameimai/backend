@@ -14,7 +14,7 @@ class BannerResquest extends BaseRequest
     public function rules()
     {
         return [
-            'name' => 'required',
+            'name' => 'nullable|string|max:255',
             'url' => 'nullable|url',
             'img' => 'required',
             'img_mobile' => 'nullable',

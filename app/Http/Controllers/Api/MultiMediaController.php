@@ -26,6 +26,7 @@ class MultiMediaController extends Controller
 
             return response()->json([
                 'result' => $query->orderByDesc('is_top')
+                    ->orderBy('sort', 'ASC')
                     ->orderBy('name', 'ASC')
                     ->get()
             ]);

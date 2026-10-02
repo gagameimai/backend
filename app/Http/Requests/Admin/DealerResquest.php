@@ -15,7 +15,14 @@ class DealerResquest extends BaseRequest
     {
         return [
             'name' => 'required',
-            'county' => 'required',
+            'county' => ['required', function ($attr, $value, $fail) {
+                $list = config('county', []);
+                $name = is_string($value) ? str_replace('臺', '台', trim($value)) : $value;
+                $okIdx = (is_int($value) || ctype_digit((string) $value)) && isset($list[(int) $value]);
+                if (!$okIdx && !in_array($name, $list, true)) {
+                    $fail('縣市請給代碼 0～' . (count($list) - 1) . ' 或名稱（例：桃園市）；可用：' . implode('、', $list));
+                }
+            }],
             'address' => 'required',
             'tel' => 'required',
             'status' => 'required|integer',

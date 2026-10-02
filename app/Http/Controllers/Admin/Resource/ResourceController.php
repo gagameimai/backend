@@ -45,7 +45,8 @@ class ResourceController extends Controller
         }
 
         return response()->json([
-            'items' => $query->paginate(15),
+            // per_page：檔案管理畫面一次載入整個分類（最多 200 筆），才能在同一分類內完整調整順序；沒帶就維持原本每頁 15 筆
+            'items' => $query->paginate(min(max((int) $request->input('per_page', 15), 1), 200)),
             'categorys' => ResourceCategoryModel::orderByDesc('status')
                 ->orderBy('sort', 'ASC')
                 ->orderByDesc('created_at')
@@ -63,6 +64,7 @@ class ResourceController extends Controller
     public function create(ResourceResquest $request)
     {
         ResourceModel::create([
+            'sort' => ((int) ResourceModel::max('sort')) + 1,   // 新資料排最後（排序數字小的在前）
             'resource_category_id' => $request->input('resource_category_id'),
             'name' => $request->input('name'),
             'url' => $request->input('url'),

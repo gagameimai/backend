@@ -25,13 +25,13 @@ class ResourceCategoryController extends Controller
      *
      * @return \Illuminate\Http\Response|\Illuminate\Contracts\Routing\ResponseFactory
      */
-    public function all()
+    public function all(Request $request)
     {
         return response()->json([
             'items' => ResourceCategoryModel::orderByDesc('status')
                 ->orderBy('sort', 'ASC')
                 ->orderByDesc('created_at')
-                ->paginate(15)
+                ->paginate(min(max((int) $request->input('per_page', 15), 1), 500))
         ]);
     }
 
@@ -44,6 +44,7 @@ class ResourceCategoryController extends Controller
     public function create(ResourceCategoryResquest $request)
     {
         ResourceCategoryModel::create([
+            'sort' => ((int) ResourceCategoryModel::max('sort')) + 1,   // 新資料排最後（排序數字小的在前）
             'name' => $request->input('name'),
             'memo' => $request->input('memo'),
             'status' => $request->input('status'),

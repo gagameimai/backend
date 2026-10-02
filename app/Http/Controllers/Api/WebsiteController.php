@@ -19,7 +19,7 @@ class WebsiteController extends Controller
             $result = SettingModel::where('type', 'website')->first();
 
             return response()->json([
-                'result' => json_decode($result->content, true)
+                'result' => \App\Http\Controllers\Admin\Setting\WebsiteInfoController::decodeContent($result->content)
             ]);
         } catch (\Throwable $th) {
             $this->apiLog('WebsiteController->get()異常', $th);

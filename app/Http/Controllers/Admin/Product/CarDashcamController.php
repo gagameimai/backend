@@ -28,7 +28,9 @@ class CarDashcamController extends Controller
      */
     public function all(Request $request)
     {
-        $query = CarDashcamModel::orderByDesc('created_at');
+        $query = CarDashcamModel::orderByDesc('is_top')
+            ->orderBy('sort', 'ASC')
+            ->orderBy('id', 'ASC');
 
         if ($request->filled('name')) {
             $query = $query->where('name', 'LIKE', "%{$request->input('name')}%");
@@ -36,7 +38,7 @@ class CarDashcamController extends Controller
         }
 
         return response()->json([
-            'items' => $query->paginate(15),
+            'items' => $query->paginate(min(max((int) $request->input('per_page', 15), 1), 500)),
             'is_search' => $isSearch ?? false
         ]);
     }
@@ -50,6 +52,7 @@ class CarDashcamController extends Controller
     public function create(CarDashcamResquest $request)
     {
         CarDashcamModel::create([
+            'sort' => ((int) CarDashcamModel::max('sort')) + 1,
             'brand' => $request->input('brand'),
             'name' => $request->input('name'),
             'img' => $request->input('img'),
