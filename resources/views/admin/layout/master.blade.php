@@ -20,6 +20,14 @@
     <!-- self -->
     <link rel="stylesheet" href="{{ asset('css/self-plugin.css') }}">
 
+    <!-- 全站列表表頭固定：往下捲時，欄位標題（名稱／排序／狀態／功能…）固定在最上面 -->
+    <style>
+        .content-wrapper .table > thead > tr > th {
+            position: sticky; top: 0; z-index: 20;
+            background: #fff; box-shadow: 0 1px 0 #dee2e6;
+        }
+    </style>
+
     @yield('css')
 </head>
 

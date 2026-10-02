@@ -309,7 +309,7 @@
                         </div>
 
                         <div class="bn-save"><button type="button" class="btn btn-success btn-lg" @click="save(false)"><i class="fas fa-save"></i> 儲存</button>
-                        <button type="button" class="btn btn-outline-secondary btn-lg" @click="save(true)">儲存並回列表</button>
+                        <button type="button" class="btn btn-outline-secondary btn-lg" @click="backToList">取消</button>
                         <button type="button" class="btn btn-outline-danger float-right" @click="clearItem"><i class="fa fa-times"></i> 清除這個區塊</button></div>
                     </div>
 

@@ -83,7 +83,7 @@
                         <div class="bn-top">
                             <button type="button" class="btn btn-secondary" @click="backToList"><i class="fas fa-arrow-left"></i> 回列表</button>
                             <span class="bn-title">設定 Banner：@{{ form.page_name }}<span v-if="form.type_name && form.type_name !== '預設'"> ／ @{{ form.type_name }}</span></span>
-                            <a v-if="form.url" :href="form.url" target="_blank" class="btn btn-outline-primary btn-sm" style="margin-left:auto">看前台這一頁 <i class="fas fa-external-link-alt"></i></a>
+                            <a v-if="form.url" :href="'https://clarion.meimai.com.tw' + form.url" target="_blank" class="btn btn-outline-primary btn-sm" style="margin-left:auto">看前台這一頁 <i class="fas fa-external-link-alt"></i></a>
                         </div>
 
                         <div class="card bn-card">
@@ -229,7 +229,7 @@
                                 <tbody>
                                     <tr v-for="row in items" :key="row.page_key + '-' + row.type_key">
                                         <td>@{{ row.page_name }}</td>
-                                        <td>@{{ row.type_name }}<div v-if="row.url" style="font-size:12px"><a :href="row.url" target="_blank" class="text-muted">前台網址 @{{ row.url }}</a></div></td>
+                                        <td>@{{ row.type_name }}<div v-if="row.url" style="font-size:12px"><a :href="'https://clarion.meimai.com.tw' + row.url" target="_blank" class="text-muted">前台網址 https://clarion.meimai.com.tw@{{ row.url }}</a></div></td>
                                         <td>
                                             <img v-if="row.img" :src="row.img" style="height:44px;">
                                             <span v-else class="text-muted" style="font-size:12px">未設定</span>
