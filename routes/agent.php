@@ -22,6 +22,21 @@ Route::prefix('agent')->group(function () {
     Route::get('schema', "{$agent}@schema")->middleware('agent.key');
     Route::get('audit', "{$agent}@audit")->middleware('agent.key');
     Route::post('upload', "{$agent}@upload")->middleware('agent.key:files');
+
+    // 圖片庫／檔案庫管理（列表、下載、建資料夾、改名、搬移、縮放、裁剪、刪除、查引用）；type=files 或 images
+    $fm = '\\App\\Http\\Controllers\\Agent\\AgentFileController';
+    Route::prefix('files')->middleware('agent.key:files')->group(function () use ($fm) {
+        Route::get('list', "{$fm}@list");
+        Route::get('usage', "{$fm}@usage");
+        Route::get('info', "{$fm}@info");
+        Route::get('download', "{$fm}@download");
+        Route::post('folder', "{$fm}@makeFolder");
+        Route::post('rename', "{$fm}@rename");
+        Route::post('move', "{$fm}@move");
+        Route::post('resize', "{$fm}@resize");
+        Route::post('crop', "{$fm}@crop");
+        Route::delete('/', "{$fm}@delete");
+    });
     Route::post('publish', "{$agent}@publish")->middleware('agent.key:publish');
 
     foreach (config('agent_api.resources') as $name => $cfg) {

@@ -65,6 +65,7 @@ curl -s -H "$H" $B/schema > /tmp/schema.json
 3. `data:image/png;base64,...`
 4. multipart 直接帶檔案，欄位名同圖片欄位
 
+圖片庫（CKEditor 插入圖片，photos/1）用 `POST /upload` 加 `type=images`；老闆說「圖片庫／插入圖片」＝images，「檔案庫」＝預設 files；上傳前確認目的地，回傳 `url` 前綴要是 `/storage/photos/1/`（images）或 `/storage/files/1/`（files），不一致就回報。不要再用瀏覽器 Dropzone。
 要把檔案放進指定資料夾（例如 `Clarion 2026/GL-700_Ultra_13/...`）才先 `POST /upload` 拿 `url` 再填。
 寫入回應看 `saved_images`：網址要是 `https://admin.meimai.com.tw/storage/files/1/...`；有 `warnings` 就是沒存成功。
 尺寸（完整表見手冊第 17 章）：商品圖 1200×1200 白底／去背；首頁輪播 **1920×1080＋手機 1080×2160（直式，底部約 190px 不放字）**；各頁頂端橫幅 1920×480＋手機 1080×608（左半留白）；首頁滿版區塊 2560×1440＋手機 1080×1920。
@@ -131,3 +132,10 @@ curl -s -H "$H" $B/schema > /tmp/schema.json
 - `website` PATCH：`seo` 會往下合併一層（只送 `seo.company_en` 不會清掉其他 seo 欄位；`seo.pages` 以網址為單位合併；`seo.faq` 有送就整份取代）；`categories` 只送一個品牌不會清掉另一個品牌。保守做法「先 GET 整份、改自己的鍵、整份送回」仍然正確。
 - `seo.pages` 讀出來一律是物件 `{}`。不認識的 `categories` key 與 `logo_*` 鍵會被靜默丟掉，改完請 GET 回來確認。
 - **v4 指令已發布**：《Hermes操作指令_前台後台AgentAPI完整流程_v4_20261001.md》是實測版 SOP（上傳／新增／修改／排序／刪除／網站設定／前台驗證），與本份衝突時以 v4 為準。
+
+## 圖庫管理（type=files 檔案庫／images 圖片庫；金鑰要 files:read＋files:write）
+`GET /files/list|info|usage|download`、`POST /files/folder|rename|move|resize|crop`、`DELETE /files`，參數都帶 `type`、`path`（圖庫內相對路徑）。
+- 刪除／搬移／改名一律先經老闆同意；先 `usage` 或 `info` 看有沒有紀錄在用並回報。
+- 還有紀錄在用會回 409：搬移／改名確定要做加 `update_references=1`；刪除確定要做加 `force=1`（前台會斷圖，通常先換掉那些紀錄的圖）。
+- 縮放、裁剪預設另存新檔；`overwrite=1` 才覆蓋（原檔進垃圾桶）。刪除是移到垃圾桶，工程師可還原。
+- 「縮圖／列表顯示」「確認」是畫面按鈕，API 不需要；list 兩種資料都給，選圖直接用 `url`。

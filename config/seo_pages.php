@@ -9,7 +9,7 @@ return [
     ['path' => '/partner', 'name' => '經銷據點'],
     ['path' => '/about', 'name' => '關於我們（品牌故事）'],
     ['path' => '/qa', 'name' => '常見問題'],
-    ['path' => '/content-policy', 'name' => '內容來源與更正聲明'],
+    ['path' => '/contentPolicy', 'name' => '內容來源與更正聲明'],
     ['path' => '/download', 'name' => '資源下載'],
     ['path' => '/cases', 'name' => '安裝案例'],
     ['path' => '/clarion/gl', 'name' => '歌樂 GL 安卓機'],

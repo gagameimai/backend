@@ -67,7 +67,7 @@
 ⑦ 回報老闆：資源＋id、改前→改後、前台網址、不確定的事
 ```
 
-**三件絕對不做**：①不移動、改名、刪除檔案庫（`files/1/…`）的資料夾或檔案（資料庫存的是網址字串，動了就全站斷圖，2026-09 發生過 799 筆）；②不改公司名稱、地址、電話（要跟前台寫死的一致，先問老闆）；③不批次刪除——刪東西一次一筆，先 GET 確認是哪筆，並把 `item` 原文留在回報裡。
+**三件絕對不做**：①不自己決定移動、改名、刪除圖庫（`files/1/…`、`photos/1/…`）的資料夾或檔案（資料庫存的是網址字串，動了會全站斷圖，2026-09 發生過 799 筆）；老闆明確要求才做，做之前先 usage 回報，並依 3.1.1 的 update_references／force 規則；②不改公司名稱、地址、電話（要跟前台寫死的一致，先問老闆）；③不批次刪除——刪東西一次一筆，先 GET 確認是哪筆，並把 `item` 原文留在回報裡。
 
 ---
 
@@ -80,15 +80,37 @@
 ```
 POST /api/agent/upload   (multipart/form-data)
   file     = 檔案（單檔）     或  files[] = 多檔（最多 20 個）
-  folder   = files/1 底下的相對路徑，可多層，沒有會自動建；不填放 Agent
+  type     = files（預設，檔案庫 files/1）或 images（圖片庫 photos/1，CKEditor「插入圖片」那個）
+  folder   = 該庫底下的相對路徑，可多層，沒有會自動建；不填放 Agent
   name     = 單檔時可指定檔名（不含副檔名）
 → 單檔 {"message":"上傳成功","name":"x.png","url":"https://admin…/storage/files/1/Banner/2026/x.png","path":"…","size":123}
 → 多檔 {"items":[{name,url,path,size},…],"errors":[]}
 ```
 - 允許 jpg／jpeg／png／webp／gif／svg／pdf，單檔 20MB。不允許的類型回 422；`folder` 含 `..` 或 `\` 回 422。
 - 同名檔自動變 `-2`、`-3`，不會覆蓋別人的圖。
+- **上傳前先確認目的地**：老闆說「圖片庫／CKEditor／插入圖片／編輯器裡的圖」＝`type=images`（網址 `/storage/photos/1/…`）；說「檔案庫／下載檔／產品圖欄位」＝預設 files（網址 `/storage/files/1/…`）。有疑義就問一次，不要自己猜；上傳後檢查回傳 `url` 前綴與意圖一致，不一致要回報。`type=images` 只收 jpg／jpeg／png／webp／gif（不收 svg、pdf）。**不要再用瀏覽器 Dropzone／CDP 上傳**，API 現在兩個庫都能傳，快很多且有稽核紀錄。
 - **回傳的 `url` 原封不動填進欄位**：不要自己改網域、不要 URL 編碼、不要截前段。
 - 資料夾命名建議：`Banner/2026`、`ListBanner`、`Home`、`Products/2026`、`Frames/<車廠>`、`Cases/2026`、`Logo`、`SEO`、`Downloads`。
+
+### 3.1.1 圖片庫／檔案庫管理（列表、預覽、下載、改名、搬移、縮放、裁剪、刪除）
+`type=files`（檔案庫 files/1，預設）或 `type=images`（圖片庫 photos/1，CKEditor 插入圖片）；`path`＝該庫底下的相對路徑（不含 files/1、photos/1）。金鑰要有 `files:read`（讀）與 `files:write`（寫）。
+```
+GET    /api/agent/files/list?type=&folder=&sort=name|time|size|type&order=asc|desc&q=&page=&per_page=   列表（資料夾在前；有 url、thumb_url、size、modified）
+GET    /api/agent/files/info?type=&path=        預覽：網址、縮圖、尺寸、大小、格式、哪些紀錄在用
+GET    /api/agent/files/usage?type=&path=       這個檔案／資料夾在資料庫哪些紀錄還在用
+GET    /api/agent/files/download?type=&path=    下載
+POST   /api/agent/files/folder   {type,path}                       建資料夾
+POST   /api/agent/files/rename   {type,path,new_name,update_references?}   改名（不能改副檔名）
+POST   /api/agent/files/move     {type,path,to_folder,update_references?}  搬移
+POST   /api/agent/files/resize   {type,path,width?,height?,keep_ratio?,allow_upscale?,save_as?,overwrite?}  縮放（預設等比、不放大、另存新檔）
+POST   /api/agent/files/crop     {type,path,x,y,width,height,save_as?,overwrite?}  裁剪
+DELETE /api/agent/files          {type,path,recursive?,force?}     刪除（移到垃圾桶，可由工程師還原）
+```
+- 畫面上的「縮圖顯示／列表顯示」只是顯示方式，API 的 list 兩種資料都給；「確認」是畫面選圖按鈕，API 不需要，直接把 `url` 填進欄位。
+- **刪除、搬移、改名一律先老闆同意**。老闆沒明確說，不准自己動。做之前先 `usage`（或 `info`）看有沒有紀錄在用，把結果回報給老闆。
+- 系統自己也會擋：還有紀錄在用就回 409 並列出是哪些紀錄。搬移／改名確定要做 → 加 `update_references=1`（系統會把資料庫裡的舊網址一併換成新網址）；刪除確定要做 → 加 `force=1`，前台對應的圖會斷，通常應先把那些紀錄換成別張圖。
+- 縮放、裁剪預設另存新檔（檔名加 `-寬x高` 或 `-crop`），原檔不動；`overwrite=1` 才覆蓋，原檔備份在垃圾桶。
+- 做完檢查回傳的 `url` 是否在預期的庫（`/storage/photos/1/` 或 `/storage/files/1/`）。
 
 **B. 直接在寫入請求裡給圖**（最省事）：任何圖片欄位都可以放 ①`https://…` 外部圖片網址（伺服器自己下載）②`data:image/png;base64,…` ③multipart 直接帶檔（欄位名同圖片欄位）④已經在站內的網址。伺服器會存進 `files/1/AgentImport/年月/`，檔名用欄位名（`img.png`、`img-2.png`…）。
 

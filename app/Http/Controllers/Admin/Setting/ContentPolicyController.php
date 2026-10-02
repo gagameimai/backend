@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\SettingModel;
 
 /**
- * 內容來源與更正聲明（前台 /content-policy）
+ * 內容來源與更正聲明（前台 /contentPolicy）
  * setting.type = 'content_policy'，content 是 JSON：
  * { zh: {title, intro, body}, en: {title, intro, body} }
  * body 是 HTML（CKEditor），title／intro 是純文字。欄位留空＝前台用程式內建的預設文字。

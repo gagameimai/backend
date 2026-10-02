@@ -61,12 +61,36 @@ class AgentController extends Controller
             'header' => config('agent_api.header'),
             'note' => 'fields 內的規則就是後台畫面的驗證規則：required＝必填；integer＝整數；nullable＝可留空。img 類欄位請先呼叫 POST /api/agent/upload 取得網址再填入。',
             'upload' => [
-                'endpoint' => 'POST /api/agent/upload  (multipart/form-data: file 或 files[]、folder、name)',
-                'folder' => '後台檔案管理員 files/1 底下的相對路徑，可多層，例：Clarion 2026/GL-700_Ultra_13/Chinese/Transparent/3840x2159；沒有會自動建立；不填放 ' . config('agent_api.upload.default_folder'),
+                'endpoint' => 'POST /api/agent/upload  (multipart/form-data: file 或 files[]、type、folder、name)',
+                'type' => 'files（預設）＝檔案庫 files/1；images＝圖片庫 photos/1（後台 CKEditor「插入圖片」看到的那個，只收 jpg/jpeg/png/webp/gif）。老闆說「圖片庫／CKEditor／插入圖片」＝images；說「檔案庫／下載檔」＝files。回傳的 url 開頭 /storage/photos/1/ 或 /storage/files/1/ 要和老闆說的一致',
+                'folder' => '後台檔案管理員 files/1（type=images 時是 photos/1）底下的相對路徑，可多層，例：Clarion 2026/GL-700_Ultra_13/Chinese/Transparent/3840x2159；沒有會自動建立；不填放 ' . config('agent_api.upload.default_folder'),
                 'max_kb' => config('agent_api.upload.max_kb'),
                 'max_files' => config('agent_api.upload.max_files'),
                 'mimes' => config('agent_api.upload.mimes'),
                 'response' => '單檔回 {url,path,size}；多檔回 {items:[{name,url,path,size}], errors:[...]}',
+            ],
+            'file_manager' => [
+                'scope' => '需要 files:read（列表／下載／查引用）與 files:write（其餘）',
+                'common' => 'type=files（檔案庫 files/1，預設）或 images（圖片庫 photos/1，CKEditor 插入圖片用）；path＝該庫底下的相對路徑（不含 files/1、photos/1）',
+                'endpoints' => [
+                    'GET /api/agent/files/list?type=&folder=&sort=name|time|size|type&order=asc|desc&q=&page=&per_page=&with_dimensions=1' => '列出資料夾內容（資料夾排前面）；每個檔案有 url、thumb_url、size、modified；相當於後台的縮圖／列表顯示＋排序',
+                    'GET /api/agent/files/usage?type=&path=' => '查這個檔案或資料夾在資料庫哪些紀錄還在用（動它之前先查）',
+                    'GET /api/agent/files/info?type=&path=' => '預覽（後台檔案管理員的「預覽」）：回單一檔案的網址、縮圖網址、尺寸、大小、格式、有哪些紀錄在用。「確認」是畫面上選取圖片的按鈕，API 不需要，直接把 url 填進欄位即可',
+                    'GET /api/agent/files/download?type=&path=' => '下載檔案（回傳檔案本體）',
+                    'POST /api/agent/files/folder {type,path}' => '建資料夾（可多層）',
+                    'POST /api/agent/files/rename {type,path,new_name,update_references?}' => '改名（檔案或資料夾；檔案不能改副檔名）',
+                    'POST /api/agent/files/move {type,path,to_folder,update_references?}' => '搬移到另一個資料夾（to_folder 空字串＝圖庫根目錄）',
+                    'POST /api/agent/files/resize {type,path,width?,height?,keep_ratio?,allow_upscale?,save_as?,overwrite?}' => '縮放（預設等比、不放大、另存新檔；overwrite=1 才覆蓋，原檔備份到垃圾桶）',
+                    'POST /api/agent/files/crop {type,path,x,y,width,height,save_as?,overwrite?}' => '裁剪（x、y 是左上角像素）；其餘同縮放',
+                    'DELETE /api/agent/files {type,path,recursive?,force?}' => '刪除（移到垃圾桶 storage/app/agent_trash/，可由工程師還原；非空資料夾要 recursive=1）',
+                ],
+                'safety' => [
+                    '刪除／搬移／改名前系統會掃全站資料庫，若還有紀錄在用這個網址，一律回 409 並列出是哪些紀錄，不會默默讓前台斷圖。',
+                    '搬移／改名確定要做 → 加 update_references=1，系統會把資料庫裡的舊網址換成新網址（含編碼、JSON 跳脫寫法）。',
+                    '刪除確定要做 → 加 force=1（前台對應圖片會斷，通常應先把那些紀錄換成別張圖）。',
+                    '縮放／裁剪預設另存新檔（檔名加 -寬x高 或 -crop），原檔不動。',
+                    '老闆沒明確說要刪／搬／改名，不要自己動；做之前先 usage 再回報給老闆確認。',
+                ],
             ],
             'image_input' => config('agent_field_docs.image_input'),
             'common_fields' => config('agent_field_docs.common'),
@@ -153,7 +177,14 @@ class AgentController extends Controller
     public function upload(Request $request)
     {
         $cfg = config('agent_api.upload');
-        $fileRule = 'file|max:' . $cfg['max_kb'] . '|mimes:' . $cfg['mimes'];
+        // type：files（預設）＝檔案庫 files/1；images＝圖片庫 photos/1（CKEditor 插入圖片看到的那個）
+        $type = strtolower(trim((string) $request->input('type', 'files'))) ?: 'files';
+        if (!in_array($type, ['files', 'images'], true)) {
+            return response()->json(['message' => 'type 只能是 files（檔案庫 files/1）或 images（圖片庫 photos/1）'], 422);
+        }
+        $isImages = $type === 'images';
+        $mimes = $isImages ? ($cfg['mimes_images'] ?? 'jpg,jpeg,png,webp,gif') : $cfg['mimes'];
+        $fileRule = 'file|max:' . $cfg['max_kb'] . '|mimes:' . $mimes;
         $request->validate([
             'file' => 'required_without:files|' . $fileRule,
             'files' => 'required_without:file|array|max:' . $cfg['max_files'],
@@ -168,7 +199,8 @@ class AgentController extends Controller
         if (preg_match('#(^|/)\.\.?(/|$)#', $folder) || preg_match('#[\\\\\x00-\x1f]#', $folder)) {
             return response()->json(['message' => '資料夾路徑不合法（不能含 ..、反斜線）'], 422);
         }
-        $dir = rtrim($cfg['base'], '/') . '/' . $folder;
+        $base = $isImages ? ($cfg['base_images'] ?? 'photos/1') : $cfg['base'];
+        $dir = rtrim($base, '/') . '/' . $folder;
         $disk = Storage::disk($cfg['disk']);
         $disk->makeDirectory($dir);
 
@@ -202,10 +234,11 @@ class AgentController extends Controller
 
         if ($single) {
             if (!$items) return response()->json(['message' => '上傳失敗', 'errors' => $errors], 500);
-            return response()->json(['message' => '上傳成功'] + $items[0]);
+            return response()->json(['message' => '上傳成功', 'type' => $type] + $items[0]);
         }
         return response()->json([
             'message' => count($items) . ' 個上傳成功' . ($errors ? '、' . count($errors) . ' 個失敗' : ''),
+            'type' => $type,
             'folder' => $folder,
             'items' => $items,
             'errors' => $errors,

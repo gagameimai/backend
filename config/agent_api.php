@@ -22,7 +22,7 @@ return [
         'dealers'   => '經銷據點',
         'resources' => '資源下載與分類',
         'settings'  => '網站基本設定、常見問題、關於我們',
-        'files'     => '圖片上傳（只有 write）',
+        'files'     => '圖片庫／檔案庫：上傳、列表、下載、改名、搬移、縮放、裁剪、刪除（讀取類要 files:read，其餘 files:write）',
         'publish'   => '通知重新產生前台（只有 write）',
     ],
 
@@ -64,7 +64,7 @@ return [
             'notes' => '整份 content 物件送回（先 GET /all 拿到 item.content，改欄位後 PATCH {"content": {...}}）。公司名稱、地址、電話要跟前台 composables/useSiteInfo.js 逐字一致。'],
         'qa'                    => ['scope' => 'settings', 'controller' => 'App\Http\Controllers\Admin\Setting\QaController',                  'model' => null, 'request' => null, 'style' => 'single'],
         'about'                 => ['scope' => 'settings', 'controller' => 'App\Http\Controllers\Admin\Setting\AboutController',               'model' => null, 'request' => null, 'style' => 'single'],
-        // 內容來源與更正聲明（前台 /content-policy）：content = { zh: {title, intro, body}, en: {title, intro, body} }，可只送要改的語言／欄位，其餘維持；欄位空字串＝前台用內建預設文字
+        // 內容來源與更正聲明（前台 /contentPolicy）：content = { zh: {title, intro, body}, en: {title, intro, body} }，可只送要改的語言／欄位，其餘維持；欄位空字串＝前台用內建預設文字
         'content_policy'        => ['scope' => 'settings', 'controller' => 'App\Http\Controllers\Admin\Setting\ContentPolicyController',       'model' => null, 'request' => null, 'style' => 'single',
             'notes' => 'PATCH {"content": {"zh": {"body": "<p>…</p>"}}} 只改中文內文，其他維持。body 是 HTML，title／intro 是純文字。清空某欄（送 ""）＝前台改用程式內建的預設文字。'],
         // 浮水印設定（後台「系統設定 → 浮水印設定」）：4 組固定槽位 key=0..3，只能換圖／還原，不能新增刪除；只影響「之後」存檔的車框圖片
@@ -78,6 +78,9 @@ return [
         'disk' => 'public',
         'base' => 'files/1',
         'default_folder' => 'Agent',
+        // type=images：寫進後台「CKEditor 插入圖片」用的圖片庫（photos/1），只收圖片格式（不收 svg、pdf）
+        'base_images' => 'photos/1',
+        'mimes_images' => 'jpg,jpeg,png,webp,gif',
         'max_kb' => 20480,
         'max_files' => 20,                       // 一次最多幾個檔（files[]）
         'mimes' => 'jpg,jpeg,png,webp,gif,svg,pdf',

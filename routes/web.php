@@ -57,7 +57,7 @@ Route::group([
                 Route::patch('/', 'AboutController@update');
             });
 
-            // 內容來源與更正聲明（前台 /content-policy，中英文各一份）
+            // 內容來源與更正聲明（前台 /contentPolicy，中英文各一份）
             Route::prefix('content_policy')->group(function () {
                 Route::get('/', 'ContentPolicyController@index')->name('admin.content_policy');
                 Route::get('all', 'ContentPolicyController@all');
